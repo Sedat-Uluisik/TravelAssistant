@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "804725117966",
+    "project_id": "booklist-9aa6e",
+    "storage_bucket": "booklist-9aa6e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804725117966:android:b868aa79163a33af94d85f",
+        "android_client_info": {
+          "package_name": "com.sedat.booklist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "804725117966-j149hugr8dd71hm08avjdnlih30oj7mj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnCbYabd-8DxZFQj5ugyRtSO5TopWfie8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "804725117966-j149hugr8dd71hm08avjdnlih30oj7mj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804725117966:android:4f8276f177d2beda94d85f",
+        "android_client_info": {
+          "package_name": "com.sedat.travelassistant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "804725117966-j149hugr8dd71hm08avjdnlih30oj7mj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnCbYabd-8DxZFQj5ugyRtSO5TopWfie8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "804725117966-j149hugr8dd71hm08avjdnlih30oj7mj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

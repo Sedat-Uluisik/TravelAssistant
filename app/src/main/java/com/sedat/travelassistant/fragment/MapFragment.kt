@@ -223,7 +223,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
             }
         })*/
 
-        viewModel.places.observe(viewLifecycleOwner, {
+        viewModel.places.observe(viewLifecycleOwner) {
             it?.let {
 
                 viewModel.getVisitedLocationPoints()
@@ -236,10 +236,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
                     val location = LatLng(place.properties.lat, place.properties.lon)
                     var markerColor = 0
 
-                    if(getBothLocations){  //marker lar içinde kaydedilen konumlardan varsa rengini mavi yapmak için kullanıldı.
-                        if(viewModel.savedPlaces2.size > 0){
-                            for (k in viewModel.savedPlaces2){
-                                if(k.lat == place.properties.lat && k.lon == place.properties.lon){
+                    if (getBothLocations) {  //marker lar içinde kaydedilen konumlardan varsa rengini mavi yapmak için kullanıldı.
+                        if (viewModel.savedPlaces2.size > 0) {
+                            for (k in viewModel.savedPlaces2) {
+                                if (k.lat == place.properties.lat && k.lon == place.properties.lon) {
                                     markerColor = 3
                                     break
                                 }
@@ -248,32 +248,34 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
                     }
 
                     //ziyaret edilen yerlerin marker ları gezilen tarihe göre yeşil/kırmızı yapıldı.
-                    if(viewModel.visitedLocationList.size > 0){
-                        for (i in viewModel.visitedLocationList){
+                    if (viewModel.visitedLocationList.size > 0) {
+                        for (i in viewModel.visitedLocationList) {
                             val latLng = LatLng(i.latitude, i.longitude)
-                            if(latLng == location){
-                                markerColor = if(checkDate(i.date)) {  //Aynı tarihte içinde gezilmiş ise marker yeşil
-                                    1
-                                }
-                                else { //önceki tarihlerde gezilmiş ise kırmızı
-                                    2
-                                }
+                            if (latLng == location) {
+                                markerColor =
+                                    if (checkDate(i.date)) {  //Aynı tarihte içinde gezilmiş ise marker yeşil
+                                        1
+                                    } else { //önceki tarihlerde gezilmiş ise kırmızı
+                                        2
+                                    }
                             }
                         }
                     }
 
                     val marker = mMap.addMarker(
-                            MarkerOptions()
-                                    .position(location)
-                                    .title(place.properties.name)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(
-                                            when (markerColor) {
-                                                0 -> BitmapDescriptorFactory.HUE_VIOLET
-                                                1 -> BitmapDescriptorFactory.HUE_GREEN
-                                                2 -> BitmapDescriptorFactory.HUE_RED
-                                                else -> BitmapDescriptorFactory.HUE_BLUE
-                                            }
-                                    ))
+                        MarkerOptions()
+                            .position(location)
+                            .title(place.properties.name)
+                            .icon(
+                                BitmapDescriptorFactory.defaultMarker(
+                                    when (markerColor) {
+                                        0 -> BitmapDescriptorFactory.HUE_VIOLET
+                                        1 -> BitmapDescriptorFactory.HUE_GREEN
+                                        2 -> BitmapDescriptorFactory.HUE_RED
+                                        else -> BitmapDescriptorFactory.HUE_BLUE
+                                    }
+                                )
+                            )
                     )
 
                     marker?.let {
@@ -300,7 +302,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
                     placeListForSaved.addAll(viewModel.savedPlaces2)
                 }*/
             }
-        })
+        }
 
         viewModel.pointListForRoute.observe(viewLifecycleOwner, Observer {
             it?.let { list ->
@@ -326,43 +328,43 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
             }
         })
 
-        viewModel.savedPlaces.observe(viewLifecycleOwner, {
+        viewModel.savedPlaces.observe(viewLifecycleOwner) {
             placeListForSaved.clear()
             placeListForSaved.addAll(it)
 
-
-
-            for (i in it){
+            for (i in it) {
 
                 val location = LatLng(i.lat, i.lon)
                 var markerColor = 0
 
-                if(viewModel.visitedLocationList.size > 0){
-                    for (j in viewModel.visitedLocationList){
+                if (viewModel.visitedLocationList.size > 0) {
+                    for (j in viewModel.visitedLocationList) {
                         val latLng = LatLng(j.latitude, j.longitude)
-                        if(latLng == location){
-                            markerColor = if(checkDate(j.date)) {  //Aynı tarihte içinde gezilmiş ise marker yeşil
-                                1
-                            }
-                            else { //önceki tarihlerde gezilmiş ise kırmızı
-                                2
-                            }
+                        if (latLng == location) {
+                            markerColor =
+                                if (checkDate(j.date)) {  //Aynı tarihte içinde gezilmiş ise marker yeşil
+                                    1
+                                } else { //önceki tarihlerde gezilmiş ise kırmızı
+                                    2
+                                }
                             //break
                         }
                     }
                 }
 
                 val marker = mMap.addMarker(
-                        MarkerOptions()
-                                .position(LatLng(i.lat, i.lon))
-                                .title(i.name)
-                                .icon(BitmapDescriptorFactory.defaultMarker(
-                                       when(markerColor){
-                                           0 -> BitmapDescriptorFactory.HUE_BLUE
-                                           1 -> BitmapDescriptorFactory.HUE_GREEN
-                                           else -> BitmapDescriptorFactory.HUE_RED
-                                       }
-                                ))
+                    MarkerOptions()
+                        .position(LatLng(i.lat, i.lon))
+                        .title(i.name)
+                        .icon(
+                            BitmapDescriptorFactory.defaultMarker(
+                                when (markerColor) {
+                                    0 -> BitmapDescriptorFactory.HUE_BLUE
+                                    1 -> BitmapDescriptorFactory.HUE_GREEN
+                                    else -> BitmapDescriptorFactory.HUE_RED
+                                }
+                            )
+                        )
                 )
 
                 //kayıtlı yerleri gösterirken onlarada rota oluşturma eklenecek
@@ -371,7 +373,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
                     viewModel.markersOnMap.add(marker)
                 }
             }
-        })
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
