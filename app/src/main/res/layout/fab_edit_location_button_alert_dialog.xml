@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:padding="7dp"
+    android:background="@color/green2">
+
+    <Button
+        android:id="@+id/only_internet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/only_internet"
+        android:fontFamily="@font/autour_one"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_margin="3dp"
+        android:padding="7dp"
+        android:textAllCaps="false"
+        android:background="@drawable/background_2"/>
+
+    <Button
+        android:id="@+id/only_saved"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="@string/only_saved_locations"
+        android:fontFamily="@font/autour_one"
+        android:textStyle="bold"
+        android:layout_margin="3dp"
+        android:padding="7dp"
+        android:textAllCaps="false"
+        android:background="@drawable/background_2"/>
+
+    <Button
+        android:id="@+id/both_of_them"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="@string/show_all"
+        android:fontFamily="@font/autour_one"
+        android:textStyle="bold"
+        android:layout_margin="3dp"
+        android:padding="7dp"
+        android:textAllCaps="false"
+        android:background="@drawable/background_2"/>
+
+</LinearLayout>

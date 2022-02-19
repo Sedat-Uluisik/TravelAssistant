@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="savedPlace"
+            type="com.sedat.travelassistant.model.room.SavedPlace" />
+
+        <variable
+            name="isUpdate"
+            type="Boolean" />
+
+        <variable
+            name="clickListener"
+            type="com.sedat.travelassistant.listener.SavedDetailsFragmentClickListener" />
+
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragment.SavedDetailsFragment">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_add_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fabSize="normal"
+            android:backgroundTint="#912cba"
+            app:backgroundTint="@android:color/transparent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/add_image_white_100"
+            app:maxImageSize="36dp"
+            android:visibility="gone"
+            app:layout_anchorGravity="bottom|end"
+            app:layout_anchor="@id/linearLayout"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_create_route_saved_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fabSize="normal"
+            android:backgroundTint="#912cba"
+            app:backgroundTint="#912cba"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/route_64"
+            app:maxImageSize="48dp"
+            android:visibility="visible"
+            android:elevation="1dp"
+            app:elevation="1dp"
+            app:layout_anchorGravity="bottom|end"
+            app:layout_anchor="@id/linearLayout"
+            android:onClick="@{()->clickListener.fabCreateRouteButtonClick(savedPlace)}"/>
+
+        <com.ortiz.touchview.TouchImageView
+            android:id="@+id/image_view_zoom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:scaleType="centerInside"
+            android:visibility="gone"/>
+
+        <ScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/place_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/background_3"
+                    android:enabled="@{isUpdate}"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@{savedPlace.name}"
+                    android:textColor="#912CBA"
+                    android:textSize="22sp"
+                    android:textStyle="italic"
+                    android:fontFamily="@font/carter_one"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/custom_alert_background"
+                    android:orientation="vertical"
+                    android:padding="7dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:orientation="horizontal"
+                        android:padding="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/city"
+                            android:fontFamily="@font/autour_one"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold|italic" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=": "
+                            android:fontFamily="@font/autour_one"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/city"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:backgroundTint="@android:color/transparent"
+                            android:enabled="@{isUpdate}"
+                            android:text="@{savedPlace.city}"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/autour_one"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:orientation="horizontal"
+                        android:padding="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/district"
+                            android:fontFamily="@font/autour_one"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold|italic" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=": "
+                            android:fontFamily="@font/autour_one"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/district"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:backgroundTint="@android:color/transparent"
+                            android:enabled="@{isUpdate}"
+                            android:fontFamily="@font/autour_one"
+                            android:text="@{savedPlace.district}"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:orientation="horizontal"
+                        android:padding="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/address"
+                            android:fontFamily="@font/autour_one"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold|italic" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=": "
+                            android:fontFamily="@font/autour_one"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/address"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:backgroundTint="@android:color/transparent"
+                            android:enabled="@{isUpdate}"
+                            android:fontFamily="@font/autour_one"
+                            android:text="@{savedPlace.address}"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:orientation="horizontal"
+                        android:padding="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/state"
+                            android:fontFamily="@font/autour_one"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold|italic" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=": "
+                            android:fontFamily="@font/autour_one"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/state"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:backgroundTint="@android:color/transparent"
+                            android:enabled="@{isUpdate}"
+                            android:fontFamily="@font/autour_one"
+                            android:text="@{savedPlace.state}"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:orientation="horizontal"
+                        android:padding="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/street"
+                            android:fontFamily="@font/autour_one"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold|italic" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=": "
+                            android:fontFamily="@font/autour_one"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/street"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:backgroundTint="@android:color/transparent"
+                            android:enabled="@{isUpdate}"
+                            android:fontFamily="@font/autour_one"
+                            android:text="@{savedPlace.street}"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:orientation="horizontal"
+                        android:padding="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/suburb"
+                            android:fontFamily="@font/autour_one"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold|italic" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=": "
+                            android:fontFamily="@font/autour_one"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/suburb"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:backgroundTint="@android:color/transparent"
+                            android:enabled="@{isUpdate}"
+                            android:fontFamily="@font/autour_one"
+                            android:text="@{savedPlace.suburb}"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/images"
+                    android:fontFamily="@font/carter_one"
+                    android:textSize="18sp"
+                    android:textStyle="italic" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/custom_alert_background"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/images_not_fount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="3dp"
+                        android:gravity="center"
+                        android:text="@string/you_havent_added_a_picture"
+                        android:textColor="#912CBA"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/autour_one"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_saved_place_images"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp" />
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/update_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/button_back_4"
+                    android:onClick="@{()-> clickListener.updateButtonClick(savedPlace)}"
+                    android:text="@string/update"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/autour_one"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</layout>

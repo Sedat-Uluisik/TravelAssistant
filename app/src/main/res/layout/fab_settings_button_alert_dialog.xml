@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:padding="7dp"
+    android:background="@color/green2">
+
+    <Button
+        android:id="@+id/settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings"
+        android:fontFamily="@font/autour_one"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:layout_margin="3dp"
+        android:padding="7dp"
+        android:background="@drawable/background_2"
+        android:drawableStart="@drawable/ic_outline_settings_24"/>
+
+    <Button
+        android:id="@+id/add_location_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_my_location"
+        android:fontFamily="@font/autour_one"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:layout_margin="3dp"
+        android:padding="7dp"
+        android:background="@drawable/background_2"
+        android:drawableStart="@drawable/add_location_24"/>
+
+</LinearLayout>

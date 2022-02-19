@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about">Hakkında</string>
+    <string name="add_my_location">Konumumu ekle</string>
+    <string name="add_to_route">Rotaya ekle</string>
+    <string name="add_route">Rota ekle</string>
+    <string name="address">Adres</string>
+    <string name="app_name">Seyahat Asistanı</string>
+    <string name="camera">Kamera</string>
+    <string name="cancel">İptal</string>
+    <string name="categories">Kategoriler</string>
+    <string name="city">Şehir</string>
+    <string name="close">Kapat</string>
+    <string name="details">Detaylar</string>
+    <string name="district">Semt</string>
+    <string name="error_location">Konumun açık olduğundan emin olun!</string>
+    <string name="gallery">Galeri</string>
+    <string name="give_permission">İzin Ver</string>
+    <string name="images">Resimler</string>
+    <string name="internet_is_not_open">İnternet açık değil</string>
+    <string name="location_not_found">Hata! Konum bulunamadı.</string>
+    <string name="location_is_not_open">Konum açık değil</string>
+    <string name="map">Harita</string>
+    <string name="map_type">Harita türü</string>
+    <string name="map_type_default">Varsayılan</string>
+    <string name="map_type_terrain">Arazi</string>
+    <string name="map_type_satellite">Uydu</string>
+    <string name="max_4_routes_can_be_added">Max 4 rota eklenebilir</string>
+    <string name="max_number_of_locations">Max lokasyon sayısı</string>
+    <string name="max_distance">Max Mesafe(m)(daire)</string>
+    <string name="not_found_info">Üzgünüm, bu yer hakkında bilgi bulunamadı</string>
+    <string name="not_visited">Ziyaret edilmedi</string>
+    <string name="only_internet">Konumları internetten al</string>
+    <string name="only_saved_locations">Sadece kayıtlı konumları göster</string>
+    <string name="or">ya da</string>
+    <string name="permission_needed">İzin Gerekli</string>
+    <string name="permission_needed_for_location">Konum izni gerekli</string>
+    <string name="please_select_location">Lütfen konum seçin</string>
+    <string name="route_added">Rota eklendi</string>
+    <string name="search">Ara…</string>
+    <string name="saved">Kaydedilenler</string>
+    <string name="saved_locations">Kaydedilen konumlar</string>
+    <string name="save_successful">Kayıt başarılı</string>
+    <string name="selected_routes">Seçilen rotalar</string>
+    <string name="settings">Ayarlar</string>
+    <string name="show_all">Hepsini göster</string>
+    <string name="show_circle">Daireyi göster</string>
+    <string name="state">Bölge</string>
+    <string name="start">Başla</string>
+    <string name="street">Sokak</string>
+    <string name="suburb">Mahalle</string>
+    <string name="traffic">Trafik</string>
+    <string name="title_activity_maps">Seyahat Asistanı</string>
+    <string name="update">Güncelle</string>
+    <string name="visited_in_the_past">Geçmişte ziyaret edildi</string>
+    <string name="visited_today">Bugün ziyaret edildi</string>
+    <string name="you_havent_added_a_picture">Henüz resim eklememişsin</string>
+    <string name="remove_google_map_icons">  <!-- Haritadaki diğer ikonları isimleri gizlemek için -->
+        [
+    {
+      \"featureType\": \"poi\",
+      \"elementType\": \"all\",
+      \"stylers\": [
+        {
+          \"visibility\": \"off\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"transit\",
+      \"elementType\": \"labels.icon\",
+      \"stylers\": [
+        {
+          \"visibility\": \"off\"
+        }
+      ]
+    }
+  ]
+  </string>
+</resources>

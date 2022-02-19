@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="2dp"
+    android:padding="2dp"
+    android:background="@drawable/selected_route_adapter_item_back">
+
+    <TextView
+        android:id="@+id/route_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="name"
+        android:fontFamily="@font/autour_one"
+        android:textStyle="bold"
+        android:textSize="15sp"
+        android:textColor="@android:color/white"
+        android:padding="5dp" />
+
+</LinearLayout>

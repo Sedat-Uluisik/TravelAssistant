@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <fragment
+        android:id="@+id/fragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        app:menu="@menu/bottom_menu"
+        app:itemIconTint="@color/selected_item_color"
+        app:itemTextColor="@color/selected_item_color"
+        app:itemTextAppearanceActive="@style/BottomNavigation.ActiveItemTextAppearance"
+        app:itemTextAppearanceInactive="@style/BottomNavigation.InactiveItemTextAppearance"
+        android:layout_gravity="bottom"
+        android:background="@drawable/recycler_image_back"/>
+
+</LinearLayout>

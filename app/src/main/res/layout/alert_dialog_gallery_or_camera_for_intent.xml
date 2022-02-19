@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="3dp"
+    android:gravity="center_horizontal"
+    android:background="#D8D8D8">
+
+    <Button
+        android:id="@+id/button_gallery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/gallery"
+        android:fontFamily="@font/autour_one"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/button_back_1_colorful"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/or"
+        android:fontFamily="@font/autour_one"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:layout_margin="2dp"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/button_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/camera"
+        android:fontFamily="@font/autour_one"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/button_back_1_colorful"/>
+
+</LinearLayout>

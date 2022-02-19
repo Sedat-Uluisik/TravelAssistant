@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mapFragment">
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.sedat.travelassistant.fragment.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" >
+        <argument
+            android:name="category"
+            app:argType="string"
+            android:defaultValue="tourism.sights" />
+        <action
+            android:id="@+id/action_mapFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+        <action
+            android:id="@+id/action_mapFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_mapFragment_to_savedDetailsFragment"
+            app:destination="@id/savedDetailsFragment" />
+        <argument
+            android:name="selectedRoute"
+            app:argType="com.sedat.travelassistant.model.selectedroute.SelectedRoute"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/savedFragment"
+        android:name="com.sedat.travelassistant.fragment.SavedFragment"
+        android:label="fragment_saved"
+        tools:layout="@layout/fragment_saved" >
+        <action
+            android:id="@+id/action_savedFragment_to_savedDetailsFragment"
+            app:destination="@id/savedDetailsFragment" />
+        <action
+            android:id="@+id/action_savedFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="com.sedat.travelassistant.fragment.CategoriesFragment"
+        android:label="fragment_categories"
+        tools:layout="@layout/fragment_categories" >
+        <action
+            android:id="@+id/action_categoriesFragment2_to_mapFragment2"
+            app:destination="@id/mapFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/mapFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="com.sedat.travelassistant.fragment.DetailsFragment"
+        android:label="fragment_details"
+        tools:layout="@layout/fragment_details" >
+        <argument
+            android:name="place"
+            app:argType="com.sedat.travelassistant.model.Properties"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_detailsFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.sedat.travelassistant.fragment.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/savedDetailsFragment"
+        android:name="com.sedat.travelassistant.fragment.SavedDetailsFragment"
+        android:label="fragment_saved_details"
+        tools:layout="@layout/fragment_saved_details" >
+        <argument
+            android:name="savedPlace"
+            app:argType="com.sedat.travelassistant.model.room.SavedPlace"
+            app:nullable="true" />
+        <argument
+            android:name="isUpdate"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <argument
+            android:name="isAddNewLocation"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <argument
+            android:name="location"
+            app:argType="android.location.Location"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_savedDetailsFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
+</navigation>
