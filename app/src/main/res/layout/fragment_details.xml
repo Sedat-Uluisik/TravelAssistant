@@ -106,7 +106,9 @@
 
             </androidx.core.widget.NestedScrollView>
 
-            <include layout="@layout/comment_layout" />
+            <include
+                android:id="@+id/included_comment_layout"
+                layout="@layout/comment_layout" />
 
         </LinearLayout>
 

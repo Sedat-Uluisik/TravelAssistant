@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -13,9 +14,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firestore.v1.DocumentTransform
 import com.sedat.travelassistant.R
 import com.sedat.travelassistant.adapter.ImagesAdapter
+import com.sedat.travelassistant.databinding.CommentItemLayoutBinding
+import com.sedat.travelassistant.databinding.CommentLayoutBinding
 import com.sedat.travelassistant.databinding.FragmentDetailsBinding
+import com.sedat.travelassistant.model.firebase.Comment
 import com.sedat.travelassistant.model.selectedroute.SelectedRoute
 import com.sedat.travelassistant.viewmodel.DetailsFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,11 +41,14 @@ class DetailsFragment @Inject constructor(
 
     private lateinit var viewModel: DetailsFragmentViewModel
 
+    private var firestore: FirebaseFirestore ?= null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         fragmentBinding = FragmentDetailsBinding.inflate(inflater, container, false)
+
         val view = binding.root
         return view
     }
@@ -93,6 +105,38 @@ class DetailsFragment @Inject constructor(
                         }
                 )
                 findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToMapFragment("tourism.sights", selectedRoute))
+            }
+        }
+
+        firestore = FirebaseFirestore.getInstance()
+        binding.includedCommentLayout.toCommentButton.setOnClickListener {
+            //val commentDate = DateFormat.format("dd/MM/yyyy", comment.getDate()!!)
+            if(place != null){
+                val comment = Comment(
+                    "username",
+                    "comment text",
+                    System.currentTimeMillis(),
+                    2,
+                    1,
+                    4.5f
+                )
+
+                val place_ = HashMap<String, Any>()
+                place_["placeName"] = place!!.name
+                place_["rating"] = 4.5f
+
+                val ref = firestore!!.collection("Places")
+                    .document(place!!.placeId)
+
+                ref.set(place_)
+                ref.collection("Comments")
+                    .add(comment)
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "yorum eklendi", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(context, "hata: ${it.localizedMessage}}", Toast.LENGTH_SHORT).show()
+                    }
             }
         }
 
