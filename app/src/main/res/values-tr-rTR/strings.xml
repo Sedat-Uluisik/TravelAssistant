@@ -11,6 +11,7 @@
     <string name="categories">Kategoriler</string>
     <string name="city">Şehir</string>
     <string name="close">Kapat</string>
+    <string name="comment">Yorum yap</string>
     <string name="details">Detaylar</string>
     <string name="district">Semt</string>
     <string name="error_location">Konumun açık olduğundan emin olun!</string>

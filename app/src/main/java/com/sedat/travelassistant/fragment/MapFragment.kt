@@ -316,8 +316,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
                         options.add(latLong)
                     }
 
-                    println("--------------")
-
                     if(googleMap != null)
                         polyLine = googleMap.addPolyline(options)
 

@@ -24,7 +24,7 @@
         app:maxImageSize="48dp"
         app:elevation="1dp"
         android:elevation="1dp"
-        app:layout_anchorGravity="bottom|end"
+        app:layout_anchorGravity="bottom|start"
         app:layout_anchor="@id/relativeLayout"/>
 
     <ScrollView
@@ -105,6 +105,8 @@
                 </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>
+
+            <include layout="@layout/comment_layout" />
 
         </LinearLayout>
 
