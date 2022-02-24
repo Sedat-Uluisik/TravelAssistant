@@ -11,8 +11,10 @@
     <string name="city">City</string>
     <string name="close">Close</string>
     <string name="comment">To comment</string>
+    <string name="commen_sent">Comment sent</string>
     <string name="details">Details</string>
     <string name="district">District</string>
+    <string name="error">Error</string>
     <string name="error_location">Make sure the location is on!</string>
     <string name="gallery">Gallery</string>
     <string name="give_permission">Give permission</string>
@@ -36,6 +38,7 @@
     <string name="permission_needed">Permission needed</string>
     <string name="permission_needed_for_location">Permission needed for location</string>
     <string name="please_select_location">Please select location</string>
+    <string name="please_fill_in_all_fields">Please fill in all fields</string>
     <string name="route_added">Route added</string>
     <string name="search">Search…</string>
     <string name="saved">Saved</string>
@@ -52,6 +55,7 @@
     <string name="traffic">Traffic</string>
     <string name="title_activity_maps">Travel Assistant</string>
     <string name="update">Update</string>
+    <string name="username">username:</string>
     <string name="visited_in_the_past">Visited in the past</string>
     <string name="visited_today">Visited today</string>
     <string name="you_havent_added_a_picture">You havent added a picture yet</string>

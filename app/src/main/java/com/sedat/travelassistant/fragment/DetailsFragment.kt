@@ -41,8 +41,6 @@ class DetailsFragment @Inject constructor(
 
     private lateinit var viewModel: DetailsFragmentViewModel
 
-    private var firestore: FirebaseFirestore ?= null
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -66,6 +64,8 @@ class DetailsFragment @Inject constructor(
             bind(place!!)
             getImages(place!!.name)
             viewModel.getInfo(place!!.name)
+
+            viewModel.checkLocationInDatabase(place!!)
         }
 
         binding.backButton.setOnClickListener {
@@ -108,35 +108,30 @@ class DetailsFragment @Inject constructor(
             }
         }
 
-        firestore = FirebaseFirestore.getInstance()
         binding.includedCommentLayout.toCommentButton.setOnClickListener {
             //val commentDate = DateFormat.format("dd/MM/yyyy", comment.getDate()!!)
-            if(place != null){
-                val comment = Comment(
-                    "username",
-                    "comment text",
-                    System.currentTimeMillis(),
-                    2,
-                    1,
-                    4.5f
-                )
+            val commentView = binding.includedCommentLayout
+            if(place != null && commentView != null){
 
-                val place_ = HashMap<String, Any>()
-                place_["placeName"] = place!!.name
-                place_["rating"] = 4.5f
+                val username = commentView.usernameComment.text.toString()
+                val comment_ = commentView.commentEditText.text.toString()
+                val rating = commentView.ratingBarComment.rating
 
-                val ref = firestore!!.collection("Places")
-                    .document(place!!.placeId)
+                if(username.isNotEmpty() && comment_.isNotEmpty() && rating > 0.0){
+                    val comment = Comment(
+                        username,
+                        comment_,
+                        System.currentTimeMillis(),
+                        0,
+                        0,
+                        rating
+                    )
 
-                ref.set(place_)
-                ref.collection("Comments")
-                    .add(comment)
-                    .addOnSuccessListener {
-                        Toast.makeText(context, "yorum eklendi", Toast.LENGTH_SHORT).show()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(context, "hata: ${it.localizedMessage}}", Toast.LENGTH_SHORT).show()
-                    }
+                    viewModel.postComment(place!!, comment)
+                }else{
+                    Toast.makeText(requireContext(), getString(R.string.please_fill_in_all_fields), Toast.LENGTH_LONG).show()
+                }
+
             }
         }
 

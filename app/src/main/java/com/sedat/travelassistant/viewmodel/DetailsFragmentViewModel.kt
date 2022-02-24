@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sedat.travelassistant.R
+import com.sedat.travelassistant.model.Properties
+import com.sedat.travelassistant.model.firebase.Comment
 import com.sedat.travelassistant.model.image.PlaceImage
 import com.sedat.travelassistant.model.info.Detail
 import com.sedat.travelassistant.model.info.Info
@@ -80,6 +82,9 @@ class DetailsFragmentViewModel @Inject constructor(
                         })
         )
     }
+
+    fun checkLocationInDatabase(place: Properties) = repository.checkLocationInDatabase(place)
+    fun postComment(place: Properties, comment: Comment) = repository.postComment(place, comment)
 
     fun clearData(){
         imageList.value = null

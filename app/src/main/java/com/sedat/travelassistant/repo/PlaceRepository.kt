@@ -1,8 +1,14 @@
 package com.sedat.travelassistant.repo
 
 import android.content.Context
+import android.widget.Toast
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.sedat.travelassistant.R
 import com.sedat.travelassistant.api.PlacesApi
 import com.sedat.travelassistant.model.Place
+import com.sedat.travelassistant.model.Properties
+import com.sedat.travelassistant.model.firebase.Comment
 import com.sedat.travelassistant.model.visitedlocaions.VisitedLocations
 import com.sedat.travelassistant.model.image.PlaceImage
 import com.sedat.travelassistant.model.info.Info
@@ -21,7 +27,8 @@ class PlaceRepository @Inject constructor(
         @ApplicationContext private val context: Context
 ): PlaceRepositoryInterface {
 
-    val dao = TravelDatabase(context).dao()
+    private val dao = TravelDatabase(context).dao()
+    private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     override fun getPlace(category: String, latLong: String, limit: Int): Single<Place> {
         return placesApi.getPlace(category, latLong, limit)
@@ -93,5 +100,54 @@ class PlaceRepository @Inject constructor(
 
     override suspend fun fullTextSearch(query: String): List<SavedPlace> {
         return dao.fullTextSearch(query)
+    }
+
+    override fun checkLocationInDatabase(place: Properties) {
+        val docRef = firestore.collection("Locations").document(place.placeId)
+        docRef.get()
+            .addOnSuccessListener { document ->
+                if(document.data == null){
+                    val place_ = HashMap<String, Any>()
+                    place_["placeId"] = docRef.id
+                    place_["rating"] = 0.0
+
+                    docRef.set(place_)
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+            }
+    }
+
+    override fun postComment(place: Properties, comment: Comment) {
+        //check for place
+        val docRef = firestore.collection("Locations").document(place.placeId)
+        docRef.get()
+            .addOnSuccessListener { document ->
+                if(document != null && document.data != null){
+                    //yer kayıtlı, yorumu yaz
+                    sendComment(comment, docRef)
+                }else{
+                    //yer kayıtlı değil, kaydet ve yorumu yaz
+                    checkLocationInDatabase(place)
+                    sendComment(comment, docRef)
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+            }
+
+
+    }
+
+    private fun sendComment(comment: Comment, docRef: DocumentReference){
+        docRef.collection("Comments")
+            .add(comment)
+            .addOnSuccessListener {
+                Toast.makeText(context, context.getString(R.string.commen_sent), Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "${context.getString(R.string.error)}: ${it.localizedMessage}}", Toast.LENGTH_SHORT).show()
+            }
     }
 }

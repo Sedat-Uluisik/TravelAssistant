@@ -1,6 +1,8 @@
 package com.sedat.travelassistant.repo
 
 import com.sedat.travelassistant.model.Place
+import com.sedat.travelassistant.model.Properties
+import com.sedat.travelassistant.model.firebase.Comment
 import com.sedat.travelassistant.model.visitedlocaions.VisitedLocations
 import com.sedat.travelassistant.model.image.PlaceImage
 import com.sedat.travelassistant.model.info.Info
@@ -34,4 +36,8 @@ interface PlaceRepositoryInterface {
     suspend fun deleteImagesFromRoom(id: Int, root_id: Int)
     suspend fun deleteAllImagesWithRootId(root_id: Int)
     suspend fun fullTextSearch(query: String): List<SavedPlace>
+
+    //firebase functions
+    fun checkLocationInDatabase(place: Properties)
+    fun postComment(place: Properties, comment: Comment)
 }

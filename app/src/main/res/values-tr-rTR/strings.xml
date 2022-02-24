@@ -12,8 +12,10 @@
     <string name="city">Şehir</string>
     <string name="close">Kapat</string>
     <string name="comment">Yorum yap</string>
+    <string name="commen_sent">Yorum gönderildi</string>
     <string name="details">Detaylar</string>
     <string name="district">Semt</string>
+    <string name="error">Hata</string>
     <string name="error_location">Konumun açık olduğundan emin olun!</string>
     <string name="gallery">Galeri</string>
     <string name="give_permission">İzin Ver</string>
@@ -37,6 +39,7 @@
     <string name="permission_needed">İzin Gerekli</string>
     <string name="permission_needed_for_location">Konum izni gerekli</string>
     <string name="please_select_location">Lütfen konum seçin</string>
+    <string name="please_fill_in_all_fields">Lütfen tüm alanları doldurun</string>
     <string name="route_added">Rota eklendi</string>
     <string name="search">Ara…</string>
     <string name="saved">Kaydedilenler</string>
@@ -53,6 +56,7 @@
     <string name="traffic">Trafik</string>
     <string name="title_activity_maps">Seyahat Asistanı</string>
     <string name="update">Güncelle</string>
+    <string name="username">kullanıcı adı:</string>
     <string name="visited_in_the_past">Geçmişte ziyaret edildi</string>
     <string name="visited_today">Bugün ziyaret edildi</string>
     <string name="you_havent_added_a_picture">Henüz resim eklememişsin</string>
