@@ -12,21 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_create_route_details"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:fabSize="normal"
-        android:backgroundTint="@color/purple_default"
-        app:backgroundTint="@color/purple_default"
-        android:src="@drawable/route_64"
-        app:maxImageSize="48dp"
-        app:elevation="1dp"
-        android:elevation="1dp"
-        app:layout_anchorGravity="bottom|start"
-        app:layout_anchor="@id/relativeLayout"/>
-
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
@@ -42,12 +27,34 @@
             android:orientation="vertical"
             android:padding="3dp">
 
-            <ImageView
-                android:id="@+id/back_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:src="@drawable/back_icon_48" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_create_route_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="7dp"
+                    app:fabSize="mini"
+                    android:backgroundTint="@color/purple_default"
+                    app:backgroundTint="@color/purple_default"
+                    android:src="@drawable/route_64"
+                    app:maxImageSize="32dp"
+                    app:elevation="1dp"
+                    android:elevation="1dp"
+                    android:layout_alignParentEnd="true"/>
+
+                <ImageView
+                    android:id="@+id/back_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:layout_alignParentStart="true"
+                    android:src="@drawable/back_icon_48"
+                    android:contentDescription="back" />
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/name_text"

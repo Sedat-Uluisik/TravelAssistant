@@ -4,6 +4,8 @@ import android.content.Context
 import android.widget.Toast
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.toObjects
 import com.sedat.travelassistant.R
 import com.sedat.travelassistant.api.PlacesApi
 import com.sedat.travelassistant.model.Place
@@ -102,7 +104,7 @@ class PlaceRepository @Inject constructor(
         return dao.fullTextSearch(query)
     }
 
-    override fun checkLocationInDatabase(place: Properties) {
+    override fun checkLocationInDatabase(place: Properties, listener: (List<Comment>) -> Unit) {
         val docRef = firestore.collection("Locations").document(place.placeId)
         docRef.get()
             .addOnSuccessListener { document ->
@@ -113,41 +115,65 @@ class PlaceRepository @Inject constructor(
 
                     docRef.set(place_)
                 }
+
+                getComments(docRef, place, listener)
             }
             .addOnFailureListener {
                 Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
             }
     }
 
-    override fun postComment(place: Properties, comment: Comment) {
+    override fun postComment(place: Properties, comment: Comment, callBack: (Boolean) -> Unit) {
         //check for place
         val docRef = firestore.collection("Locations").document(place.placeId)
         docRef.get()
             .addOnSuccessListener { document ->
                 if(document != null && document.data != null){
-                    //yer kayıtlı, yorumu yaz
-                    sendComment(comment, docRef)
+                    //lokasyon kayıtlı, yorumu yaz
+                    sendComment(comment, docRef, callBack)
                 }else{
-                    //yer kayıtlı değil, kaydet ve yorumu yaz
-                    checkLocationInDatabase(place)
-                    sendComment(comment, docRef)
+                    //lokasyon kayıtlı değil, kaydet ve yorumu yaz
+                    checkLocationInDatabase(place){
+
+                    }
+                    sendComment(comment, docRef, callBack)
                 }
             }
             .addOnFailureListener {
                 Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+                callBack(false)
             }
-
-
     }
 
-    private fun sendComment(comment: Comment, docRef: DocumentReference){
+    private fun getComments(ref: DocumentReference, place: Properties, listener: (List<Comment>) -> Unit) {
+        ref.get()
+            .addOnSuccessListener { document ->
+                if(document != null && document.data != null){
+                    if(place.placeId == document.get("placeId")){
+                        ref.collection("Comments")
+                            .orderBy("date", Query.Direction.DESCENDING)
+                            .get()
+                            .addOnSuccessListener { results ->
+                                if(results != null){
+                                    val aa = results.toObjects<Comment>()
+                                    listener(aa)
+                                }
+                            }
+                    }
+                }
+            }
+    }
+
+    private fun sendComment(comment: Comment, docRef: DocumentReference, callBack: (Boolean) -> Unit){
         docRef.collection("Comments")
             .add(comment)
             .addOnSuccessListener {
                 Toast.makeText(context, context.getString(R.string.commen_sent), Toast.LENGTH_SHORT).show()
+                callBack(true)
             }
             .addOnFailureListener {
                 Toast.makeText(context, "${context.getString(R.string.error)}: ${it.localizedMessage}}", Toast.LENGTH_SHORT).show()
+                callBack(false)
             }
     }
 }

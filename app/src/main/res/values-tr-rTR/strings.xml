@@ -31,6 +31,7 @@
     <string name="max_4_routes_can_be_added">Max 4 rota eklenebilir</string>
     <string name="max_number_of_locations">Max lokasyon sayısı</string>
     <string name="max_distance">Max Mesafe(m)(daire)</string>
+    <string name="no_comment_yet">Bu yer hakkında henüz bir yorum yapılmadı</string>
     <string name="not_found_info">Üzgünüm, bu yer hakkında bilgi bulunamadı</string>
     <string name="not_visited">Ziyaret edilmedi</string>
     <string name="only_internet">Konumları internetten al</string>

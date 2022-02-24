@@ -3,6 +3,7 @@ package com.sedat.travelassistant.viewmodel
 import android.app.Application
 import android.content.Context
 import android.widget.Toast
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -83,8 +84,17 @@ class DetailsFragmentViewModel @Inject constructor(
         )
     }
 
-    fun checkLocationInDatabase(place: Properties) = repository.checkLocationInDatabase(place)
-    fun postComment(place: Properties, comment: Comment) = repository.postComment(place, comment)
+    private val comments = MutableLiveData<List<Comment>>()
+    val commentList: LiveData<List<Comment>>
+        get() = comments
+    fun checkLocationInDatabase(place: Properties) = repository.checkLocationInDatabase(place){
+        comments.value = it
+    }
+
+    val isDataSend = MutableLiveData<Boolean>(false)
+    fun postComment(place: Properties, comment: Comment) = repository.postComment(place, comment){
+        isDataSend.value = it
+    }
 
     fun clearData(){
         imageList.value = null

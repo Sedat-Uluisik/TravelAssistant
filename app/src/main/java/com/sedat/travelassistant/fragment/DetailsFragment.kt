@@ -20,6 +20,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firestore.v1.DocumentTransform
 import com.sedat.travelassistant.R
+import com.sedat.travelassistant.adapter.CommentAdapter
 import com.sedat.travelassistant.adapter.ImagesAdapter
 import com.sedat.travelassistant.databinding.CommentItemLayoutBinding
 import com.sedat.travelassistant.databinding.CommentLayoutBinding
@@ -33,6 +34,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DetailsFragment @Inject constructor(
         private val imagesAdapter: ImagesAdapter,
+        private val commentAdapter: CommentAdapter,
         private val glide: RequestManager
 ) : Fragment() {
 
@@ -75,6 +77,9 @@ class DetailsFragment @Inject constructor(
 
         binding.recylerImages.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.recylerImages.adapter = imagesAdapter
+
+        binding.includedCommentLayout.recyclerViewComment.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.includedCommentLayout.recyclerViewComment.adapter = commentAdapter
 
         imagesAdapter.imageClick {
             try {
@@ -119,12 +124,12 @@ class DetailsFragment @Inject constructor(
 
                 if(username.isNotEmpty() && comment_.isNotEmpty() && rating > 0.0){
                     val comment = Comment(
-                        username,
                         comment_,
                         System.currentTimeMillis(),
                         0,
                         0,
-                        rating
+                        rating,
+                        username
                     )
 
                     viewModel.postComment(place!!, comment)
@@ -157,6 +162,28 @@ class DetailsFragment @Inject constructor(
                 binding.detailText.text = getString(R.string.not_found_info)
             }
         })
+        //clear comment view when comment is posted
+        viewModel.isDataSend.observe(viewLifecycleOwner){
+            if(it)
+                clearCommentView()
+        }
+        //get comment list
+        viewModel.commentList.observe(viewLifecycleOwner){
+            if(it.isNotEmpty()){
+                binding.includedCommentLayout.commentNotFound.visibility = View.GONE
+                commentAdapter.commentList = it
+            }
+            else{
+                commentAdapter.commentList = listOf()
+                binding.includedCommentLayout.commentNotFound.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun clearCommentView(){
+        binding.includedCommentLayout.usernameComment.setText("")
+        binding.includedCommentLayout.commentEditText.setText("")
+        binding.includedCommentLayout.ratingBarComment.rating = 0.0f
     }
 
     private fun getImages(query: String){
@@ -169,5 +196,6 @@ class DetailsFragment @Inject constructor(
         super.onDestroyView()
         fragmentBinding = null
         viewModel.clearData()
+        commentAdapter.commentList = listOf()
     }
 }
