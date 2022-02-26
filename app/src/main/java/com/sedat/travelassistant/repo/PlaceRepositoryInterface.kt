@@ -38,6 +38,7 @@ interface PlaceRepositoryInterface {
     suspend fun fullTextSearch(query: String): List<SavedPlace>
 
     //firebase functions
-    fun checkLocationInDatabase(place: Properties, listener: (List<Comment>) -> Unit)
+    fun checkLocationInDatabase(place: Properties, listener: (List<Comment>, error: String) -> Unit)
     fun postComment(place: Properties, comment: Comment, callBack: (Boolean) -> Unit)
+    fun likeOrDislikeButtonClick(placeId: String, commentId: String, likeOrDislike: Boolean)
 }

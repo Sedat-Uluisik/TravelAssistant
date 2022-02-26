@@ -78,9 +78,6 @@ class DetailsFragment @Inject constructor(
         binding.recylerImages.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.recylerImages.adapter = imagesAdapter
 
-        binding.includedCommentLayout.recyclerViewComment.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        binding.includedCommentLayout.recyclerViewComment.adapter = commentAdapter
-
         imagesAdapter.imageClick {
             try {
                 if(binding.imageviewZoom.visibility == View.GONE){
@@ -90,6 +87,18 @@ class DetailsFragment @Inject constructor(
                 }
             }catch (e: Exception){
                 println(e.message)
+            }
+        }
+
+        binding.includedCommentLayout.recyclerViewComment.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.includedCommentLayout.recyclerViewComment.adapter = commentAdapter
+
+        commentAdapter.likeDislikeButton { commentId, type ->
+            if(place != null){
+                if(type == 1) //like button clik
+                    viewModel.likeOrDislikeButtonClick(place!!.placeId, commentId, true)
+                else if(type == 2) //dislike button click
+                    viewModel.likeOrDislikeButtonClick(place!!.placeId, commentId, false)
             }
         }
 
@@ -125,6 +134,7 @@ class DetailsFragment @Inject constructor(
                 if(username.isNotEmpty() && comment_.isNotEmpty() && rating > 0.0){
                     val comment = Comment(
                         comment_,
+                        "",
                         System.currentTimeMillis(),
                         0,
                         0,

@@ -30,6 +30,11 @@ class CommentAdapter @Inject constructor(
         get() = recyclerListDiffer.currentList
         set(value) = recyclerListDiffer.submitList(value)
 
+    private var onLikeDislikeButtonClick: ((String, Int) -> Unit) ?= null  //String: commentId Int: likeButton or dislikeButton
+    fun likeDislikeButton(listener: (String, Int) -> Unit){
+        onLikeDislikeButtonClick = listener
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentAdapter.Holder {
         val view = CommentItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return Holder(view)
@@ -38,6 +43,19 @@ class CommentAdapter @Inject constructor(
     override fun onBindViewHolder(holder: CommentAdapter.Holder, position: Int) {
         val comment = commentList[position]
         holder.bind(comment)
+
+        holder.item.likeButton.setOnClickListener { view ->
+            onLikeDislikeButtonClick?.let {
+                it(comment.commentId, 1)       //1: likeButton 2: dislikeButton
+                view.isEnabled = false
+            }
+        }
+        holder.item.dislikeButton.setOnClickListener { view ->
+            onLikeDislikeButtonClick?.let {
+                it(comment.commentId, 2)
+                view.isEnabled = false
+            }
+        }
     }
 
     override fun getItemCount(): Int {

@@ -2,9 +2,11 @@ package com.sedat.travelassistant.repo
 
 import android.content.Context
 import android.widget.Toast
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import com.sedat.travelassistant.R
 import com.sedat.travelassistant.api.PlacesApi
@@ -104,7 +106,7 @@ class PlaceRepository @Inject constructor(
         return dao.fullTextSearch(query)
     }
 
-    override fun checkLocationInDatabase(place: Properties, listener: (List<Comment>) -> Unit) {
+    override fun checkLocationInDatabase(place: Properties, listener: (List<Comment>, error: String) -> Unit) {
         val docRef = firestore.collection("Locations").document(place.placeId)
         docRef.get()
             .addOnSuccessListener { document ->
@@ -133,7 +135,7 @@ class PlaceRepository @Inject constructor(
                     sendComment(comment, docRef, callBack)
                 }else{
                     //lokasyon kayıtlı değil, kaydet ve yorumu yaz
-                    checkLocationInDatabase(place){
+                    checkLocationInDatabase(place){ list, error ->
 
                     }
                     sendComment(comment, docRef, callBack)
@@ -145,18 +147,50 @@ class PlaceRepository @Inject constructor(
             }
     }
 
-    private fun getComments(ref: DocumentReference, place: Properties, listener: (List<Comment>) -> Unit) {
+    override fun likeOrDislikeButtonClick(placeId: String, commentId: String, likeOrDislike: Boolean) {
+        /*
+        likeOrDislike = true -> like button click
+        likeOrDislike = false -> dislike button click
+         */
+        val ref = firestore.collection("Locations")
+                .document(placeId)
+                .collection("Comments")
+                .document(commentId)
+
+                ref.get()
+                    .addOnSuccessListener {
+                        val comment = it.toObject(Comment::class.java)
+                        if(comment != null){
+                            if(likeOrDislike){
+                                var like = comment.likeNumber
+                                like++
+                                ref.update("likeNumber", like)
+                            }
+                            else{
+                                var dislike = comment.dislikeNumber
+                                dislike++
+                                ref.update("dislikeNumber", dislike)
+                            }
+                        }
+                    }
+    }
+
+    private fun getComments(ref: DocumentReference, place: Properties, listener: (List<Comment>, error: String) -> Unit) {
         ref.get()
             .addOnSuccessListener { document ->
                 if(document != null && document.data != null){
                     if(place.placeId == document.get("placeId")){
                         ref.collection("Comments")
                             .orderBy("date", Query.Direction.DESCENDING)
-                            .get()
-                            .addOnSuccessListener { results ->
-                                if(results != null){
-                                    val aa = results.toObjects<Comment>()
-                                    listener(aa)
+                            .addSnapshotListener { snapshot, error ->
+                                if(error != null){
+                                    listener(listOf(), error.message.toString())
+                                    return@addSnapshotListener
+                                }
+
+                                if(snapshot != null){
+                                    val data = snapshot.toObjects<Comment>()
+                                    listener(data, "")
                                 }
                             }
                     }
@@ -165,8 +199,10 @@ class PlaceRepository @Inject constructor(
     }
 
     private fun sendComment(comment: Comment, docRef: DocumentReference, callBack: (Boolean) -> Unit){
-        docRef.collection("Comments")
-            .add(comment)
+        val newRef = docRef.collection("Comments").document()
+
+        comment.commentId = newRef.id
+        newRef.set(comment)
             .addOnSuccessListener {
                 Toast.makeText(context, context.getString(R.string.commen_sent), Toast.LENGTH_SHORT).show()
                 callBack(true)

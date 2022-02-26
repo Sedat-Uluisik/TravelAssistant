@@ -87,14 +87,19 @@ class DetailsFragmentViewModel @Inject constructor(
     private val comments = MutableLiveData<List<Comment>>()
     val commentList: LiveData<List<Comment>>
         get() = comments
-    fun checkLocationInDatabase(place: Properties) = repository.checkLocationInDatabase(place){
-        comments.value = it
+    fun checkLocationInDatabase(place: Properties) = repository.checkLocationInDatabase(place){ list, error ->
+        if(list.isNotEmpty())
+            comments.value = list
+        else if(list.isEmpty() && error.isNotEmpty())
+            comments.value = list
     }
 
     val isDataSend = MutableLiveData<Boolean>(false)
     fun postComment(place: Properties, comment: Comment) = repository.postComment(place, comment){
         isDataSend.value = it
     }
+
+    fun likeOrDislikeButtonClick(placeId: String, commentId: String, likeOrDislike: Boolean) = repository.likeOrDislikeButtonClick(placeId, commentId, likeOrDislike)
 
     fun clearData(){
         imageList.value = null
