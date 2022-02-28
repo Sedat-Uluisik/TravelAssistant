@@ -10,9 +10,11 @@
     android:background="#EAEAEA">
 
     <EditText
+        android:id="@+id/login_e_mail_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/e_mail"
+        android:inputType="textEmailAddress"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
         android:drawableStart="@drawable/email_24"
@@ -26,6 +28,7 @@
         android:background="@drawable/custom_alert_background"/>
 
     <EditText
+        android:id="@+id/login_password_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/password"
@@ -43,6 +46,7 @@
         android:background="@drawable/custom_alert_background"/>
 
     <Button
+        android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/login"

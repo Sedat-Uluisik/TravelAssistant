@@ -25,6 +25,7 @@
     <string name="location_not_found">Hata! Konum bulunamadı.</string>
     <string name="location_is_not_open">Konum açık değil</string>
     <string name="login">Giriş yap</string>
+    <string name="logout_first">Önce oturumu kapatmalısınız</string>
     <string name="map">Harita</string>
     <string name="map_type">Harita türü</string>
     <string name="map_type_default">Varsayılan</string>

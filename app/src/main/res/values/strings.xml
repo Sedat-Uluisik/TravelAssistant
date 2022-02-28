@@ -24,6 +24,7 @@
     <string name="location_not_found">Error! Location not found.</string>
     <string name="location_is_not_open">Location is not open</string>
     <string name="login">Login</string>
+    <string name="logout_first">You must logout first</string>
     <string name="map">Map</string>
     <string name="map_type">Map type</string>
     <string name="map_type_default">Default</string>
