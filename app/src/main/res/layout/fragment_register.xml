@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="7dp"
+    android:gravity="center"
+    android:background="#EAEAEA"
+    tools:context=".fragment.RegisterFragment">
+
+    <EditText
+        android:id="@+id/register_e_mail_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/e_mail"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        android:drawableStart="@drawable/email_24"
+        tools:ignore="RtlSymmetry"
+        android:paddingStart="12dp"
+        android:paddingEnd="7dp"
+        android:paddingBottom="7dp"
+        android:paddingTop="7dp"
+        android:layout_margin="7dp"
+        android:maxLines="1"
+        android:background="@drawable/custom_alert_background"/>
+
+    <EditText
+        android:id="@+id/register_pass_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        android:drawableStart="@drawable/lock_24"
+        tools:ignore="RtlSymmetry"
+        android:paddingStart="12dp"
+        android:paddingEnd="7dp"
+        android:paddingBottom="7dp"
+        android:paddingTop="7dp"
+        android:layout_margin="7dp"
+        android:maxLines="1"
+        android:background="@drawable/custom_alert_background"/>
+
+    <EditText
+        android:id="@+id/register_username_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/username"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        android:drawableStart="@drawable/person_24"
+        tools:ignore="RtlSymmetry"
+        android:paddingStart="12dp"
+        android:paddingEnd="7dp"
+        android:paddingBottom="7dp"
+        android:paddingTop="7dp"
+        android:layout_margin="7dp"
+        android:maxLines="1"
+        android:maxLength="30"
+        android:background="@drawable/custom_alert_background"
+        android:inputType="text" />
+
+
+    <Button
+        android:id="@+id/register_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/register"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="17sp"
+        android:padding="5dp"
+        android:layout_margin="7dp"
+        android:textAllCaps="false"
+        android:background="@drawable/custom_alert_background"
+        android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>

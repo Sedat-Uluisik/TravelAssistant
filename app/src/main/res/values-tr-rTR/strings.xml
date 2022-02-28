@@ -15,6 +15,7 @@
     <string name="commen_sent">Yorum gönderildi</string>
     <string name="details">Detaylar</string>
     <string name="district">Semt</string>
+    <string name="e_mail">E-mail</string>
     <string name="error">Hata</string>
     <string name="error_location">Konumun açık olduğundan emin olun!</string>
     <string name="gallery">Galeri</string>
@@ -23,6 +24,7 @@
     <string name="internet_is_not_open">İnternet açık değil</string>
     <string name="location_not_found">Hata! Konum bulunamadı.</string>
     <string name="location_is_not_open">Konum açık değil</string>
+    <string name="login">Giriş yap</string>
     <string name="map">Harita</string>
     <string name="map_type">Harita türü</string>
     <string name="map_type_default">Varsayılan</string>
@@ -37,10 +39,13 @@
     <string name="only_internet">Konumları internetten al</string>
     <string name="only_saved_locations">Sadece kayıtlı konumları göster</string>
     <string name="or">ya da</string>
+    <string name="password">Şifre</string>
     <string name="permission_needed">İzin Gerekli</string>
     <string name="permission_needed_for_location">Konum izni gerekli</string>
     <string name="please_select_location">Lütfen konum seçin</string>
     <string name="please_fill_in_all_fields">Lütfen tüm alanları doldurun</string>
+    <string name="profile">Profil</string>
+    <string name="register">Kayıt ol</string>
     <string name="route_added">Rota eklendi</string>
     <string name="search">Ara…</string>
     <string name="saved">Kaydedilenler</string>

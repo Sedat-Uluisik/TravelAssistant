@@ -6,6 +6,7 @@ import com.bumptech.glide.RequestManager
 import com.sedat.travelassistant.adapter.CategoriesAdapter
 import com.sedat.travelassistant.adapter.CommentAdapter
 import com.sedat.travelassistant.adapter.ImagesAdapter
+import com.sedat.travelassistant.adapter.ViewPagerAdapter
 import com.sedat.travelassistant.fragment.*
 import com.sedat.travelassistant.util.SaveImageToFile
 import javax.inject.Inject
@@ -22,6 +23,7 @@ class BaseFragmentFactory @Inject constructor(
             CategoriesFragment::class.java.name -> CategoriesFragment()
             DetailsFragment::class.java.name -> DetailsFragment(imagesAdapter, commentAdapter, glide)
             SavedDetailsFragment::class.java.name -> SavedDetailsFragment(glide)
+            ProfileFragment::class.java.name -> ProfileFragment()
             else -> super.instantiate(classLoader, className)
         }
 
