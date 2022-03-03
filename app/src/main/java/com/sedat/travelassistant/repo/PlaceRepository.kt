@@ -321,8 +321,21 @@ class PlaceRepository @Inject constructor(
         val newRef = docRef.collection("Comments").document()
 
         comment.commentId = newRef.id
-        newRef.set(comment)
+        newRef.set(comment)  //yorum kaydedilir.
             .addOnSuccessListener {
+
+                docRef.get() //mekana ait rating güncellemesi yapılıyor.
+                    .addOnSuccessListener {
+                        if(it.data != null){
+                            var placeRating = it.get("rating").toString().toFloat()
+                            placeRating += comment.rating
+
+                            docRef.update(mapOf(
+                                "rating" to placeRating
+                            ))
+                        }
+                    }
+
                 Toast.makeText(context, context.getString(R.string.comment_sent), Toast.LENGTH_SHORT).show()
                 callBack(true)
             }
