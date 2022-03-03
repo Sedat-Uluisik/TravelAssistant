@@ -21,6 +21,7 @@
         <entry key="..\:/Users/Sedat/AndroidStudioProjects/TravelAssistant/app/src/main/res/drawable/recycler_image_back.xml" value="0.2685" />
         <entry key="..\:/Users/Sedat/AndroidStudioProjects/TravelAssistant/app/src/main/res/drawable/search_bar_back.xml" value="0.2685" />
         <entry key="..\:/Users/Sedat/AndroidStudioProjects/TravelAssistant/app/src/main/res/drawable/selected_route_adapter_item_back.xml" value="0.2685" />
+        <entry key="..\:/Users/Sedat/AndroidStudioProjects/TravelAssistant/app/src/main/res/drawable/update_32.xml" value="0.142" />
         <entry key="..\:/Users/Sedat/AndroidStudioProjects/TravelAssistant/app/src/main/res/layout/activity_login_or_register.xml" value="0.38697916666666665" />
         <entry key="..\:/Users/Sedat/AndroidStudioProjects/TravelAssistant/app/src/main/res/layout/auth_layout.xml" value="0.38697916666666665" />
         <entry key="..\:/Users/Sedat/AndroidStudioProjects/TravelAssistant/app/src/main/res/layout/category_item_layout_root.xml" value="0.38697916666666665" />
@@ -34,6 +35,8 @@
         <entry key="..\:/Users/Sedat/AndroidStudioProjects/TravelAssistant/app/src/main/res/layout/fragment_saved.xml" value="0.38697916666666665" />
         <entry key="..\:/Users/Sedat/AndroidStudioProjects/TravelAssistant/app/src/main/res/layout/fragment_saved_details.xml" value="0.38697916666666665" />
         <entry key="..\:/Users/Sedat/AndroidStudioProjects/TravelAssistant/app/src/main/res/menu/bottom_menu.xml" value="0.2962962962962963" />
+        <entry key="..\:/Users/Sedat/AndroidStudioProjects/TravelAssistant/app/src/main/res/menu/popup_menu.xml" value="0.13177083333333334" />
+        <entry key="..\:/Users/Sedat/AndroidStudioProjects/TravelAssistant/app/src/main/res/menu/popup_menu_for_comment_item.xml" value="0.13177083333333334" />
       </map>
     </option>
   </component>

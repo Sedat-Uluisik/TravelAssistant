@@ -9,5 +9,6 @@ data class Comment(
     var dislikeNumber: Int = 0,
     var likeNumber: Int = 0,
     var rating: Float = 0.0f,
-    var userName: String = ""
+    var userName: String = "",
+    var userId: String = ""
 )

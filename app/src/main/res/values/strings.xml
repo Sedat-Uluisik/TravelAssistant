@@ -1,21 +1,25 @@
 <resources>
     <string name="about">About</string>
     <string name="address">Address</string>
+    <string name="accounts_were_created">Accounts were created</string>
     <string name="add_my_location">Add my location</string>
     <string name="add_to_route">Add to route</string>
     <string name="add_route">Add route</string>
     <string name="app_name">Travel Assistant</string>
+    <string name="authentication_failed">Authentication failed</string>
     <string name="camera">Camera</string>
     <string name="cancel">Cancel</string>
     <string name="categories">Categories</string>
     <string name="city">City</string>
     <string name="close">Close</string>
     <string name="comment">To comment</string>
-    <string name="commen_sent">Comment sent</string>
+    <string name="comment_sent">Comment sent</string>
+    <string name="delete">Delete</string>
     <string name="details">Details</string>
     <string name="district">District</string>
     <string name="e_mail">E-mail</string>
     <string name="error">Error</string>
+    <string name="error_for_account">You must sign in to comment</string>
     <string name="error_location">Make sure the location is on!</string>
     <string name="gallery">Gallery</string>
     <string name="give_permission">Give permission</string>

@@ -40,5 +40,7 @@ interface PlaceRepositoryInterface {
     //firebase functions
     fun checkLocationInDatabase(place: Properties, listener: (List<Comment>, error: String) -> Unit)
     fun postComment(place: Properties, comment: Comment, callBack: (Boolean) -> Unit)
-    fun likeOrDislikeButtonClick(placeId: String, commentId: String, likeOrDislike: Boolean)
+    fun likeOrDislikeButtonClick(placeId: String, commentId: String, userId: String, likeOrDislike: Boolean)
+    fun updateComment(placeId: String, commentId: String, userId: String)
+    fun deleteComment(placeId: String, commentId: String, userId: String)
 }

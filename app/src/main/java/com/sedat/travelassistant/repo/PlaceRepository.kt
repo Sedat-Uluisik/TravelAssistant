@@ -28,11 +28,12 @@ import javax.inject.Inject
 class PlaceRepository @Inject constructor(
         private val placesApi: PlacesApi,
         private val placesApiForRoute: PlacesApi,
+        private val dbFirestore: FirebaseFirestore,
         @ApplicationContext private val context: Context
 ): PlaceRepositoryInterface {
 
     private val dao = TravelDatabase(context).dao()
-    private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    //private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     override fun getPlace(category: String, latLong: String, limit: Int): Single<Place> {
         return placesApi.getPlace(category, latLong, limit)
@@ -107,7 +108,7 @@ class PlaceRepository @Inject constructor(
     }
 
     override fun checkLocationInDatabase(place: Properties, listener: (List<Comment>, error: String) -> Unit) {
-        val docRef = firestore.collection("Locations").document(place.placeId)
+        val docRef = dbFirestore.collection("Locations").document(place.placeId)
         docRef.get()
             .addOnSuccessListener { document ->
                 if(document.data == null){
@@ -127,7 +128,7 @@ class PlaceRepository @Inject constructor(
 
     override fun postComment(place: Properties, comment: Comment, callBack: (Boolean) -> Unit) {
         //check for place
-        val docRef = firestore.collection("Locations").document(place.placeId)
+        val docRef = dbFirestore.collection("Locations").document(place.placeId)
         docRef.get()
             .addOnSuccessListener { document ->
                 if(document != null && document.data != null){
@@ -147,32 +148,149 @@ class PlaceRepository @Inject constructor(
             }
     }
 
-    override fun likeOrDislikeButtonClick(placeId: String, commentId: String, likeOrDislike: Boolean) {
+    override fun likeOrDislikeButtonClick(placeId: String, commentId: String, userId: String, likeOrDislike: Boolean) {
         /*
         likeOrDislike = true -> like button click
         likeOrDislike = false -> dislike button click
          */
-        val ref = firestore.collection("Locations")
+
+        val commentRef = dbFirestore.collection("Locations")
                 .document(placeId)
                 .collection("Comments")
                 .document(commentId)
 
-                ref.get()
-                    .addOnSuccessListener {
-                        val comment = it.toObject(Comment::class.java)
-                        if(comment != null){
-                            if(likeOrDislike){
-                                var like = comment.likeNumber
-                                like++
-                                ref.update("likeNumber", like)
-                            }
-                            else{
-                                var dislike = comment.dislikeNumber
-                                dislike++
-                                ref.update("dislikeNumber", dislike)
+        val commentLikeOrDislikeRef = commentRef.collection("LikeOrDislikeNumber")
+            .document(userId)
+
+        commentLikeOrDislikeRef.get()
+            .addOnSuccessListener { document ->
+                if(document.data == null){
+                    val data = HashMap<String, Any>()
+                    data["likeOrDislike"] = likeOrDislike
+
+                    commentLikeOrDislikeRef.set(data)
+                        .addOnCompleteListener {
+                            if(it.isSuccessful){
+
+                                commentRef.get() //update comment like or dislike number
+                                    .addOnSuccessListener {
+                                        val comment = it.toObject(Comment::class.java)
+                                        if(comment != null){
+                                            if(likeOrDislike){
+                                                var like = comment.likeNumber
+                                                like++
+                                                commentRef.update("likeNumber", like)
+                                            }
+                                            else{
+                                                var dislike = comment.dislikeNumber
+                                                dislike++
+                                                commentRef.update("dislikeNumber", dislike)
+                                            }
+                                        }
+                                    }
                             }
                         }
+
+                }else{ //update comment like and dislike number
+                    if(document.get("likeOrDislike") != likeOrDislike){
+                        commentLikeOrDislikeRef.update("likeOrDislike", likeOrDislike)
+
+                        commentRef.get()
+                            .addOnSuccessListener { doc ->
+                                if(likeOrDislike){ //increase like number and decrease dislike number
+                                    if(doc != null){
+
+                                        var like = doc.get("likeNumber").toString().toInt()
+                                        var dislike = doc.get("dislikeNumber").toString().toInt()
+
+                                        println(like)
+                                        println(dislike)
+
+                                        like++
+                                        if(dislike > 0)
+                                            dislike--
+
+                                        commentRef.update(mapOf(
+                                            "likeNumber" to like,
+                                            "dislikeNumber" to dislike
+                                        ))
+
+                                        /*var like = doc.get("likeNumber").toString().toInt()
+                                        like++
+                                        commentRef.update("likeNumber", like)
+                                            .addOnSuccessListener {
+                                                var dislike = doc.get("dislikeNumber").toString().toInt()
+                                                if(dislike > 0){
+                                                    dislike--
+                                                    commentRef.update("dislikeNumber", dislike)
+                                                }
+                                            }*/
+                                    }
+                                }else{ //increase dislike number decrease  like number
+                                    if(doc != null){
+                                        var like = doc.get("likeNumber").toString().toInt()
+                                        var dislike = doc.get("dislikeNumber").toString().toInt()
+
+                                        println(like)
+                                        println(dislike)
+
+                                        dislike++
+                                        if(like > 0)
+                                            like--
+
+                                        commentRef.update(mapOf(
+                                            "likeNumber" to like,
+                                            "dislikeNumber" to dislike
+                                        ))
+
+                                        /*var dislike = doc.get("dislikeNumber").toString().toInt()
+                                        dislike++
+                                        commentRef.update("dislikeNumber", dislike)
+                                            .addOnSuccessListener {
+                                                var like = doc.get("likeNumber").toString().toInt()
+                                                if(like > 0){
+                                                    like--
+                                                    commentRef.update("likeNumber", like)
+                                                }
+                                            }*/
+                                    }
+                                }
+                            }
                     }
+                }
+            }
+    }
+
+    override fun updateComment(placeId: String, commentId: String, userId: String) {
+
+    }
+
+    override fun deleteComment(placeId: String, commentId: String, userId: String) {
+        val ref = dbFirestore.collection("Locations")
+            .document(placeId)
+            .collection("Comments")
+            .document(commentId)
+
+        ref.get().addOnSuccessListener {
+            if(it.data != null){
+                val c_id = it.get("commentId")
+                val u_id = it.get("userId")
+
+                if(c_id == commentId && u_id == userId){
+
+                    ref.collection("LikeOrDislikeNumber")
+                        .addSnapshotListener { value, error ->
+                            if(value != null && value.documents.isNotEmpty()){
+                                for (i in value.documents){  //yoruma ait beğenen ve beğenmeyen kullanıcılar koleksiyonu silinir.
+                                    i.reference.delete()
+                                }
+                                ref.delete() //devamında yorumun kendisi silindi.
+                            }else
+                                ref.delete()
+                        }
+                }
+            }
+        }
     }
 
     private fun getComments(ref: DocumentReference, place: Properties, listener: (List<Comment>, error: String) -> Unit) {
@@ -180,8 +298,9 @@ class PlaceRepository @Inject constructor(
             .addOnSuccessListener { document ->
                 if(document != null && document.data != null){
                     if(place.placeId == document.get("placeId")){
-                        ref.collection("Comments")
-                            .orderBy("date", Query.Direction.DESCENDING)
+                        val newRef = ref.collection("Comments")
+
+                        newRef.orderBy("date", Query.Direction.DESCENDING)
                             .addSnapshotListener { snapshot, error ->
                                 if(error != null){
                                     listener(listOf(), error.message.toString())
@@ -204,7 +323,7 @@ class PlaceRepository @Inject constructor(
         comment.commentId = newRef.id
         newRef.set(comment)
             .addOnSuccessListener {
-                Toast.makeText(context, context.getString(R.string.commen_sent), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.comment_sent), Toast.LENGTH_SHORT).show()
                 callBack(true)
             }
             .addOnFailureListener {

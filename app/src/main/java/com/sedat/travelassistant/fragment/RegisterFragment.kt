@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.sedat.travelassistant.MainActivity
 import com.sedat.travelassistant.R
@@ -21,6 +22,7 @@ class RegisterFragment : Fragment() {
     private val binding get() = fragmentBinding!!
 
     private lateinit var auth: FirebaseAuth
+    private var firestore: FirebaseFirestore ?= null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +36,7 @@ class RegisterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         auth = Firebase.auth
+        firestore = FirebaseFirestore.getInstance()
 
         binding.registerButton.setOnClickListener {
             val mail = binding.registerEMailEdittext.text.toString()
@@ -55,13 +58,33 @@ class RegisterFragment : Fragment() {
         auth.createUserWithEmailAndPassword(mail, pass)
             .addOnCompleteListener { task ->
                 if(task.isSuccessful){
+                    val userId = task.result.user?.uid
+                    if(userId != null){
+                        saveUserInfoForFirebase(mail, username, userId)
+                    }
+                }else
+                    Toast.makeText(requireContext(), getString(R.string.authentication_failed), Toast.LENGTH_LONG).show()
+            }
+    }
+
+    private fun saveUserInfoForFirebase(mail: String, username: String, userId: String){
+        if(firestore != null){
+            val ref = firestore!!.collection("Users")
+                .document(userId)
+
+            val user = HashMap<String, Any>()
+            user["mail"] = mail
+            user["userId"] = userId
+            user["username"] = username
+
+            ref.set(user)
+                .addOnSuccessListener {
+                    Toast.makeText(requireContext(), getString(R.string.accounts_were_created), Toast.LENGTH_LONG).show()
                     activity?.let {
                         val intent = Intent(activity, MainActivity::class.java)
                         it.startActivity(intent)
                     }
-
-                }else
-                    println("authentication failed") //!!!!!!!!!!!!!!!!!!!!!!!!! Toast
-            }
+                }
+        }
     }
 }

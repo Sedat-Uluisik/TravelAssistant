@@ -22,23 +22,13 @@
             android:textSize="16sp"
             android:layout_alignParentStart="true"/>
 
-        <TextView
-            android:id="@+id/date_comment_item"
+        <ImageView
+            android:id="@+id/comment_more_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="--/--/----"
-            android:textSize="13sp"
-            android:layout_centerInParent="true"/>
-
-        <RatingBar
-            android:id="@+id/rating_bar_comment_item"
-            style="@style/Widget.AppCompat.RatingBar.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:src="@drawable/more_vert_24"
             android:layout_alignParentEnd="true"
-            android:isIndicator="true"
-            android:progressTint="#2ECC71"
-            android:secondaryProgressTint="#2ECC71" />
+            android:padding="2dp"/>
 
     </RelativeLayout>
 
@@ -52,52 +42,80 @@
         android:textSize="15sp"
         android:textColor="@android:color/black" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <TextView
+            android:id="@+id/date_comment_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="--/--/----"
+            android:textSize="13sp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"/>
 
         <LinearLayout
-            android:id="@+id/like_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="5dp">
+            android:layout_centerHorizontal="true">
 
-            <ImageView
+            <LinearLayout
+                android:id="@+id/like_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/like_24"/>
+                android:orientation="horizontal"
+                android:padding="5dp">
 
-            <TextView
-                android:id="@+id/like_number"
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/like_24"/>
+
+                <TextView
+                    android:id="@+id/like_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="(0)"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/dislike_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="(0)"/>
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/dislike_24"/>
+
+                <TextView
+                    android:id="@+id/dislike_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="(0)"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/dislike_button"
+        <RatingBar
+            android:id="@+id/rating_bar_comment_item"
+            style="@style/Widget.AppCompat.RatingBar.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="5dp">
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:isIndicator="true"
+            android:progressTint="#2ECC71"
+            android:secondaryProgressTint="#2ECC71" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/dislike_24"/>
-
-            <TextView
-                android:id="@+id/dislike_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="(0)"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

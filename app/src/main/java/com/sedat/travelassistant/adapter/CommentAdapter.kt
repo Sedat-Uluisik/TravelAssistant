@@ -2,6 +2,7 @@ package com.sedat.travelassistant.adapter
 
 import android.text.format.DateFormat
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -34,6 +35,10 @@ class CommentAdapter @Inject constructor(
     fun likeDislikeButton(listener: (String, Int) -> Unit){
         onLikeDislikeButtonClick = listener
     }
+    private var onMoreButtonClick: ((String, String, View) -> Unit) ?= null
+    fun moreButtonClickListener(listener: (String, String, View) -> Unit){
+        onMoreButtonClick = listener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentAdapter.Holder {
         val view = CommentItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -48,12 +53,19 @@ class CommentAdapter @Inject constructor(
             onLikeDislikeButtonClick?.let {
                 it(comment.commentId, 1)       //1: likeButton 2: dislikeButton
                 view.isEnabled = false
+                holder.item.dislikeButton.isEnabled = true
             }
         }
         holder.item.dislikeButton.setOnClickListener { view ->
             onLikeDislikeButtonClick?.let {
                 it(comment.commentId, 2)
                 view.isEnabled = false
+                holder.item.likeButton.isEnabled = true
+            }
+        }
+        holder.item.commentMoreButton.setOnClickListener { v ->
+            onMoreButtonClick?.let {
+                it(comment.commentId, comment.userId, v)
             }
         }
     }

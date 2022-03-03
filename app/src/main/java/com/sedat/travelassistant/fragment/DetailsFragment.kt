@@ -1,11 +1,11 @@
 package com.sedat.travelassistant.fragment
 
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -14,11 +14,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firestore.v1.DocumentTransform
+import com.sedat.travelassistant.LoginOrRegister
 import com.sedat.travelassistant.R
 import com.sedat.travelassistant.adapter.CommentAdapter
 import com.sedat.travelassistant.adapter.ImagesAdapter
@@ -29,19 +33,23 @@ import com.sedat.travelassistant.model.firebase.Comment
 import com.sedat.travelassistant.model.selectedroute.SelectedRoute
 import com.sedat.travelassistant.viewmodel.DetailsFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.lang.reflect.Method
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class DetailsFragment @Inject constructor(
         private val imagesAdapter: ImagesAdapter,
         private val commentAdapter: CommentAdapter,
-        private val glide: RequestManager
+        private val glide: RequestManager,
+        private val ffirestore: FirebaseFirestore,
+        private val auth: FirebaseAuth
 ) : Fragment() {
 
     private var fragmentBinding: FragmentDetailsBinding ?= null
     private val binding get() = fragmentBinding!!
 
     private lateinit var viewModel: DetailsFragmentViewModel
+    //private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,6 +65,7 @@ class DetailsFragment @Inject constructor(
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity()).get(DetailsFragmentViewModel::class.java)
+        //auth = Firebase.auth
 
         var place: com.sedat.travelassistant.model.Properties ?= null
         arguments?.let {
@@ -94,12 +103,16 @@ class DetailsFragment @Inject constructor(
         binding.includedCommentLayout.recyclerViewComment.adapter = commentAdapter
 
         commentAdapter.likeDislikeButton { commentId, type ->
-            if(place != null){
-                if(type == 1) //like button clik
-                    viewModel.likeOrDislikeButtonClick(place!!.placeId, commentId, true)
+            if(place != null && auth.currentUser != null){
+                if(type == 1) //like button click
+                    viewModel.likeOrDislikeButtonClick(place!!.placeId, commentId, auth.currentUser!!.uid, true)
                 else if(type == 2) //dislike button click
-                    viewModel.likeOrDislikeButtonClick(place!!.placeId, commentId, false)
+                    viewModel.likeOrDislikeButtonClick(place!!.placeId, commentId, auth.currentUser!!.uid, false)
             }
+        }
+        commentAdapter.moreButtonClickListener { commentId, commentUserId, commentView ->
+            if(place != null && auth.currentUser != null && commentUserId == auth.currentUser!!.uid)
+                showPopupMenuForComment(place!!.placeId, commentId, auth.currentUser!!.uid, commentView)
         }
 
         binding.imageviewZoom.setOnClickListener {
@@ -124,29 +137,50 @@ class DetailsFragment @Inject constructor(
 
         binding.includedCommentLayout.toCommentButton.setOnClickListener {
             //val commentDate = DateFormat.format("dd/MM/yyyy", comment.getDate()!!)
-            val commentView = binding.includedCommentLayout
-            if(place != null && commentView != null){
+            if(auth.currentUser != null){
+                val commentView = binding.includedCommentLayout
+                if(place != null && commentView != null){
 
-                val username = commentView.usernameComment.text.toString()
-                val comment_ = commentView.commentEditText.text.toString()
-                val rating = commentView.ratingBarComment.rating
+                    ffirestore.collection("Users").document(auth.uid.toString())  //get username for comment
+                        .get()
+                        .addOnSuccessListener {
+                            if(it != null){
+                                val username = it.get("username").toString()
+                                val comment_ = commentView.commentEditText.text.toString()
+                                val rating = commentView.ratingBarComment.rating
 
-                if(username.isNotEmpty() && comment_.isNotEmpty() && rating > 0.0){
-                    val comment = Comment(
-                        comment_,
-                        "",
-                        System.currentTimeMillis(),
-                        0,
-                        0,
-                        rating,
-                        username
-                    )
+                                if(comment_.isNotEmpty() && rating > 0.0){
+                                    val comment = Comment(
+                                        comment_,
+                                        "",
+                                        System.currentTimeMillis(),
+                                        0,
+                                        0,
+                                        rating,
+                                        username,
+                                        auth.currentUser!!.uid
+                                        )
 
-                    viewModel.postComment(place!!, comment)
-                }else{
-                    Toast.makeText(requireContext(), getString(R.string.please_fill_in_all_fields), Toast.LENGTH_LONG).show()
+                                    viewModel.postComment(place!!, comment)
+                                }else{
+                                    Toast.makeText(requireContext(), getString(R.string.please_fill_in_all_fields), Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }
+
+
                 }
-
+            }else{
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.error_for_account),
+                    Snackbar.LENGTH_INDEFINITE
+                ).setAction(getString(R.string.login)){
+                    activity?.let {
+                        val intent = Intent(activity, LoginOrRegister::class.java)
+                        it.startActivity(intent)
+                    }
+                }.show()
             }
         }
 
@@ -191,7 +225,6 @@ class DetailsFragment @Inject constructor(
     }
 
     private fun clearCommentView(){
-        binding.includedCommentLayout.usernameComment.setText("")
         binding.includedCommentLayout.commentEditText.setText("")
         binding.includedCommentLayout.ratingBarComment.rating = 0.0f
     }
@@ -200,6 +233,50 @@ class DetailsFragment @Inject constructor(
         //resimler isim ile aranır ve arama yapmak için string içindeki boşluklara + karakteri eklendi.
         val queryNew = query.replace("\\s".toRegex(), "+").toLowerCase()
         viewModel.getPlaceImages(queryNew)
+    }
+
+    private fun showPopupMenuForComment(placeId: String, commentId: String, userId: String, view: View){
+        val context = ContextThemeWrapper(requireContext(), R.style.PopupMenuTheme) //popup menü dizaynı eklendi
+        val popup = PopupMenu(context, view)
+        val inflater: MenuInflater = popup.menuInflater
+        inflater.inflate(R.menu.popup_menu_for_comment_item, popup.menu)
+
+        popup.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.update_comment ->{
+                    viewModel.updateComment(placeId, commentId, userId)
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.delete_comment ->{
+                    viewModel.deleteComment(placeId, commentId, userId)
+                    return@setOnMenuItemClickListener true
+                }
+                else -> return@setOnMenuItemClickListener false
+            }
+        }
+
+        //popup menüdeki ikonların görünmesi için gerekli.
+        try {
+            val fields = popup.javaClass.declaredFields
+            for (field in fields) {
+                if ("mPopup" == field.name) {
+                    field.isAccessible = true
+                    val menuPopupHelper = field[popup]
+                    val classPopupHelper =
+                        Class.forName(menuPopupHelper.javaClass.name)
+                    val setForceIcons: Method = classPopupHelper.getMethod(
+                        "setForceShowIcon",
+                        Boolean::class.javaPrimitiveType
+                    )
+                    setForceIcons.invoke(menuPopupHelper, true)
+                    break
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }finally {
+            popup.show()
+        }
     }
 
     override fun onDestroyView() {

@@ -1,15 +1,19 @@
 package com.sedat.travelassistant.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.sedat.travelassistant.R
 import com.sedat.travelassistant.api.PlacesApi
 import com.sedat.travelassistant.repo.PlaceRepository
 import com.sedat.travelassistant.repo.PlaceRepositoryInterface
 import com.sedat.travelassistant.util.BASE_URL
 import com.sedat.travelassistant.util.BASE_URL_FOR_ROUTE
-import com.sedat.travelassistant.util.SaveImageToFile
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,7 +56,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun injectRepo(@ForPlaces placesApi: PlacesApi, @ForRoute placesApiForRoute: PlacesApi, @ApplicationContext context: Context) = PlaceRepository(placesApi, placesApiForRoute, context) as PlaceRepositoryInterface
+    fun injectRepo(@ForPlaces placesApi: PlacesApi, @ForRoute placesApiForRoute: PlacesApi, dbFirestore: FirebaseFirestore, @ApplicationContext context: Context) = PlaceRepository(placesApi, placesApiForRoute, dbFirestore, context) as PlaceRepositoryInterface
 
     @Singleton
     @Provides
@@ -64,7 +68,15 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun injectSharedPref(@ApplicationContext context: Context) = context.getSharedPreferences("com.sedat.travelassistant", Context.MODE_PRIVATE)
+    fun injectSharedPref(@ApplicationContext context: Context): SharedPreferences = context.getSharedPreferences("com.sedat.travelassistant", Context.MODE_PRIVATE)
+
+    @Singleton
+    @Provides
+    fun injectFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    @Singleton
+    @Provides
+    fun injectFirebaseAuth(): FirebaseAuth = Firebase.auth
 }
 
 //iki farklı base_url olduğu için kullanım yerine göre uygun retrofiti inject etmek için kullanıldı.

@@ -99,7 +99,10 @@ class DetailsFragmentViewModel @Inject constructor(
         isDataSend.value = it
     }
 
-    fun likeOrDislikeButtonClick(placeId: String, commentId: String, likeOrDislike: Boolean) = repository.likeOrDislikeButtonClick(placeId, commentId, likeOrDislike)
+    fun likeOrDislikeButtonClick(placeId: String, commentId: String, userId: String, likeOrDislike: Boolean) = repository.likeOrDislikeButtonClick(placeId, commentId, userId, likeOrDislike)
+
+    fun updateComment(placeId: String, commentId: String, userId: String) = repository.updateComment(placeId, commentId, userId)
+    fun deleteComment(placeId: String, commentId: String, userId: String) = repository.deleteComment(placeId, commentId, userId)
 
     fun clearData(){
         imageList.value = null
@@ -109,5 +112,6 @@ class DetailsFragmentViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         disposable.clear()
+        comments.value = listOf()
     }
 }
