@@ -43,4 +43,5 @@ interface PlaceRepositoryInterface {
     fun likeOrDislikeButtonClick(placeId: String, commentId: String, userId: String, likeOrDislike: Boolean)
     fun updateComment(placeId: String, commentId: String, userId: String)
     fun deleteComment(placeId: String, commentId: String, userId: String)
+    fun getRating(placeId: String, listener: (Float) -> Unit)
 }

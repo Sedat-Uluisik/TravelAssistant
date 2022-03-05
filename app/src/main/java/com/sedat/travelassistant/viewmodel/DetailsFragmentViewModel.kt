@@ -87,11 +87,20 @@ class DetailsFragmentViewModel @Inject constructor(
     private val comments = MutableLiveData<List<Comment>>()
     val commentList: LiveData<List<Comment>>
         get() = comments
+    private val ratingValue = MutableLiveData<Float>()
+    val rating: LiveData<Float>
+        get() = ratingValue
     fun checkLocationInDatabase(place: Properties) = repository.checkLocationInDatabase(place){ list, error ->
-        if(list.isNotEmpty())
+        if(list.isNotEmpty()){
             comments.value = list
-        else if(list.isEmpty() && error.isNotEmpty())
+            repository.getRating(place.placeId){
+                ratingValue.value = it / list.size
+            }
+        }
+        else if(list.isEmpty() && error.isNotEmpty()){
             comments.value = list
+            ratingValue.value = 0.0f
+        }
     }
 
     val isDataSend = MutableLiveData<Boolean>(false)

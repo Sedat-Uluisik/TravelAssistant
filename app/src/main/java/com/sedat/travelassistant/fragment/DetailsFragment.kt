@@ -222,6 +222,10 @@ class DetailsFragment @Inject constructor(
                 binding.includedCommentLayout.commentNotFound.visibility = View.VISIBLE
             }
         }
+        //get rating
+        viewModel.rating.observe(viewLifecycleOwner){
+            binding.ratingBarPlaceDetails.rating = it
+        }
     }
 
     private fun clearCommentView(){

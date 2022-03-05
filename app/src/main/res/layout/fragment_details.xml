@@ -45,6 +45,18 @@
                     android:elevation="1dp"
                     android:layout_alignParentEnd="true"/>
 
+                <RatingBar
+                    android:id="@+id/rating_bar_place_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    style="@style/Widget.AppCompat.RatingBar.Small"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:stepSize="0.5"
+                    android:progressTint="#2ECC71"
+                    android:secondaryProgressTint="#2ECC71"/>
+
                 <ImageView
                     android:id="@+id/back_button"
                     android:layout_width="wrap_content"

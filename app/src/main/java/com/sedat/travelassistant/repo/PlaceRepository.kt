@@ -268,25 +268,39 @@ class PlaceRepository @Inject constructor(
     override fun deleteComment(placeId: String, commentId: String, userId: String) {
         val ref = dbFirestore.collection("Locations")
             .document(placeId)
-            .collection("Comments")
+
+        val ref2 = ref.collection("Comments")
             .document(commentId)
 
-        ref.get().addOnSuccessListener {
+        ref2.get().addOnSuccessListener {
             if(it.data != null){
                 val c_id = it.get("commentId")
                 val u_id = it.get("userId")
+                val commentRating = it.get("rating").toString().toFloat()
 
                 if(c_id == commentId && u_id == userId){
 
-                    ref.collection("LikeOrDislikeNumber")
+                    ref2.collection("LikeOrDislikeNumber")
                         .addSnapshotListener { value, error ->
                             if(value != null && value.documents.isNotEmpty()){
                                 for (i in value.documents){  //yoruma ait beğenen ve beğenmeyen kullanıcılar koleksiyonu silinir.
                                     i.reference.delete()
                                 }
-                                ref.delete() //devamında yorumun kendisi silindi.
+                                ref2.delete() //devamında yorumun kendisi silindi.
                             }else
-                                ref.delete()
+                                ref2.delete()
+
+                            //update rating for place
+                            ref.get()
+                                .addOnSuccessListener { doc ->
+                                    if(doc != null){
+                                        var originalRating = doc.get("rating").toString().toFloat()
+                                        originalRating -= commentRating
+                                        ref.update(mapOf(
+                                            "rating" to originalRating
+                                        ))
+                                    }
+                                }
                         }
                 }
             }
@@ -303,18 +317,36 @@ class PlaceRepository @Inject constructor(
                         newRef.orderBy("date", Query.Direction.DESCENDING)
                             .addSnapshotListener { snapshot, error ->
                                 if(error != null){
-                                    listener(listOf(), error.message.toString())
+                                    listener(listOf(),error.message.toString())
                                     return@addSnapshotListener
                                 }
 
                                 if(snapshot != null){
                                     val data = snapshot.toObjects<Comment>()
-                                    listener(data, "")
+
+                                    if(data.isNotEmpty()){
+                                        listener(data, "")
+                                    }
                                 }
                             }
                     }
                 }
             }
+    }
+
+    override fun getRating(placeId: String, listener: (Float) -> Unit){
+        val ref = dbFirestore.collection("Locations").document(placeId) //yorumlarda değişiklikler olduğunda güncel değerleri alabilmek için yeniden referans ve listener oluşturuldu.
+
+        ref.addSnapshotListener { value, error ->
+            if(value != null){
+                val rating = value.get("rating").toString().toFloat()
+                listener(rating)
+            }else
+                listener(0.0f)
+
+            if(error != null)
+                listener(0.0f)
+        }
     }
 
     private fun sendComment(comment: Comment, docRef: DocumentReference, callBack: (Boolean) -> Unit){
