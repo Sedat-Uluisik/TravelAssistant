@@ -28,6 +28,7 @@
     <string name="location_not_found">Error! Location not found.</string>
     <string name="location_is_not_open">Location is not open</string>
     <string name="login">Login</string>
+    <string name="logout">Logout</string>
     <string name="logout_first">You must logout first</string>
     <string name="map">Map</string>
     <string name="map_type">Map type</string>
@@ -66,7 +67,7 @@
     <string name="traffic">Traffic</string>
     <string name="title_activity_maps">Travel Assistant</string>
     <string name="update">Update</string>
-    <string name="username">username:</string>
+    <string name="username">username</string>
     <string name="visited_in_the_past">Visited in the past</string>
     <string name="visited_today">Visited today</string>
     <string name="you_havent_added_a_picture">You havent added a picture yet</string>

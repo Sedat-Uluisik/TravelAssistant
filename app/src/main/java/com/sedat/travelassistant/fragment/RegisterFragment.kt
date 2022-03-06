@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.actionCodeSettings
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
@@ -35,7 +37,7 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        auth = Firebase.auth
+        auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
         binding.registerButton.setOnClickListener {
@@ -51,7 +53,6 @@ class RegisterFragment : Fragment() {
             else
                 Toast.makeText(requireContext(), getString(R.string.logout_first), Toast.LENGTH_LONG).show()
         }
-
     }
 
     private fun register(mail: String, pass: String, username: String){
@@ -62,9 +63,34 @@ class RegisterFragment : Fragment() {
                     if(userId != null){
                         saveUserInfoForFirebase(mail, username, userId)
                     }
+
+                    auth.addAuthStateListener {
+                        val user = it.currentUser
+                        if(user != null){
+                            sendVerificationEmail()
+                        }
+                    }
                 }else
                     Toast.makeText(requireContext(), getString(R.string.authentication_failed), Toast.LENGTH_LONG).show()
             }
+    }
+
+    private fun sendVerificationEmail(){
+        if(auth.currentUser != null){
+            auth.currentUser!!.sendEmailVerification()
+                .addOnCompleteListener {
+                    if(it.isSuccessful){
+                        Toast.makeText(requireContext(), "doğrulama linki gönderildi", Toast.LENGTH_LONG).show()
+                        auth.signOut()
+                        activity?.let {
+                            it.finish()
+                            startActivity(it.intent)
+                        }
+                    }else{
+                        //hata
+                    }
+                }
+        }
     }
 
     private fun saveUserInfoForFirebase(mail: String, username: String, userId: String){

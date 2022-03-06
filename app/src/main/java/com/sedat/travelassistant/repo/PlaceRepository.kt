@@ -13,6 +13,7 @@ import com.sedat.travelassistant.api.PlacesApi
 import com.sedat.travelassistant.model.Place
 import com.sedat.travelassistant.model.Properties
 import com.sedat.travelassistant.model.firebase.Comment
+import com.sedat.travelassistant.model.firebase.User
 import com.sedat.travelassistant.model.visitedlocaions.VisitedLocations
 import com.sedat.travelassistant.model.image.PlaceImage
 import com.sedat.travelassistant.model.info.Info
@@ -347,6 +348,20 @@ class PlaceRepository @Inject constructor(
             if(error != null)
                 listener(0.0f)
         }
+    }
+
+    override fun getUserInfo(userId: String, listener: (User) -> Unit) {
+        dbFirestore.collection("Users").document(userId)
+            .addSnapshotListener { value, error ->
+                if(error != null)
+                    return@addSnapshotListener
+
+                if(value != null){
+                    val user = value.toObject<User>()
+                    if(user != null)
+                        listener(user)
+                }
+            }
     }
 
     private fun sendComment(comment: Comment, docRef: DocumentReference, callBack: (Boolean) -> Unit){

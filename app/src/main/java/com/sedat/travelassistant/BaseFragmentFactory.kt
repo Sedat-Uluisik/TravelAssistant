@@ -17,7 +17,7 @@ class BaseFragmentFactory @Inject constructor(
     private val glide: RequestManager,
     private val imagesAdapter: ImagesAdapter,
     private val commentAdapter: CommentAdapter,
-    private val ffirestore: FirebaseFirestore,
+    private val dbFirestore: FirebaseFirestore,
     private val auth: FirebaseAuth
 ): FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
@@ -25,9 +25,9 @@ class BaseFragmentFactory @Inject constructor(
             MapFragment::class.java.name -> MapFragment()
             SavedFragment::class.java.name -> SavedFragment()
             CategoriesFragment::class.java.name -> CategoriesFragment()
-            DetailsFragment::class.java.name -> DetailsFragment(imagesAdapter, commentAdapter, glide, ffirestore, auth)
+            DetailsFragment::class.java.name -> DetailsFragment(imagesAdapter, commentAdapter, glide, dbFirestore, auth)
             SavedDetailsFragment::class.java.name -> SavedDetailsFragment(glide)
-            ProfileFragment::class.java.name -> ProfileFragment()
+            ProfileFragment::class.java.name -> ProfileFragment(auth)
             else -> super.instantiate(classLoader, className)
         }
 

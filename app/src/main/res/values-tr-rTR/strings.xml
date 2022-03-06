@@ -29,6 +29,7 @@
     <string name="location_not_found">Hata! Konum bulunamadı.</string>
     <string name="location_is_not_open">Konum açık değil</string>
     <string name="login">Giriş yap</string>
+    <string name="logout">Çıkış yap</string>
     <string name="logout_first">Önce oturumu kapatmalısınız</string>
     <string name="map">Harita</string>
     <string name="map_type">Harita türü</string>
@@ -67,7 +68,7 @@
     <string name="traffic">Trafik</string>
     <string name="title_activity_maps">Seyahat Asistanı</string>
     <string name="update">Güncelle</string>
-    <string name="username">kullanıcı adı:</string>
+    <string name="username">Kullanıcı adı</string>
     <string name="visited_in_the_past">Geçmişte ziyaret edildi</string>
     <string name="visited_today">Bugün ziyaret edildi</string>
     <string name="you_havent_added_a_picture">Henüz resim eklememişsin</string>

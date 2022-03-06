@@ -3,6 +3,7 @@ package com.sedat.travelassistant.repo
 import com.sedat.travelassistant.model.Place
 import com.sedat.travelassistant.model.Properties
 import com.sedat.travelassistant.model.firebase.Comment
+import com.sedat.travelassistant.model.firebase.User
 import com.sedat.travelassistant.model.visitedlocaions.VisitedLocations
 import com.sedat.travelassistant.model.image.PlaceImage
 import com.sedat.travelassistant.model.info.Info
@@ -44,4 +45,5 @@ interface PlaceRepositoryInterface {
     fun updateComment(placeId: String, commentId: String, userId: String)
     fun deleteComment(placeId: String, commentId: String, userId: String)
     fun getRating(placeId: String, listener: (Float) -> Unit)
+    fun getUserInfo(userId: String, listener: (User) -> Unit)
 }

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -47,13 +48,24 @@ class LoginFragment : Fragment() {
         auth.signInWithEmailAndPassword(mail, pass)
             .addOnCompleteListener { task ->
                 if(task.isSuccessful){
-                    activity?.let {
-                        val intent = Intent(activity, MainActivity::class.java)
-                        it.startActivity(intent)
-                    }
+                    checkEmailVerified()
                 }else{
                     println("authentication failed") //!!!!!!!!!!!!!!!!!!!!!!!!! Toast
                 }
             }
+    }
+
+    private fun checkEmailVerified(){
+        if(auth.currentUser != null){
+            if(auth.currentUser!!.isEmailVerified){
+                activity?.let {
+                    val intent = Intent(activity, MainActivity::class.java)
+                    it.startActivity(intent)
+                }
+            }else{
+                auth.signOut()
+                Toast.makeText(requireContext(), "mail doğrulaması gerekiyor", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }
