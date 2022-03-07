@@ -5,7 +5,9 @@ import android.os.Bundle
 import com.google.android.material.tabs.TabLayoutMediator
 import com.sedat.travelassistant.adapter.ViewPagerAdapter
 import com.sedat.travelassistant.databinding.ActivityLoginOrRegisterBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginOrRegister : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginOrRegisterBinding

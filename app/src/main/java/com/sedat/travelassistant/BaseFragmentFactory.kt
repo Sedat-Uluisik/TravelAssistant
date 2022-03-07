@@ -10,6 +10,7 @@ import com.sedat.travelassistant.adapter.CommentAdapter
 import com.sedat.travelassistant.adapter.ImagesAdapter
 import com.sedat.travelassistant.adapter.ViewPagerAdapter
 import com.sedat.travelassistant.fragment.*
+import com.sedat.travelassistant.repo.PlaceRepositoryInterface
 import com.sedat.travelassistant.util.SaveImageToFile
 import javax.inject.Inject
 
@@ -18,7 +19,8 @@ class BaseFragmentFactory @Inject constructor(
     private val imagesAdapter: ImagesAdapter,
     private val commentAdapter: CommentAdapter,
     private val dbFirestore: FirebaseFirestore,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val repository: PlaceRepositoryInterface
 ): FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         return when(className){
@@ -27,7 +29,9 @@ class BaseFragmentFactory @Inject constructor(
             CategoriesFragment::class.java.name -> CategoriesFragment()
             DetailsFragment::class.java.name -> DetailsFragment(imagesAdapter, commentAdapter, glide, dbFirestore, auth)
             SavedDetailsFragment::class.java.name -> SavedDetailsFragment(glide)
-            ProfileFragment::class.java.name -> ProfileFragment(auth)
+            ProfileFragment::class.java.name -> ProfileFragment(auth, dbFirestore, repository)
+            RegisterFragment::class.java.name -> RegisterFragment()
+            LoginFragment::class.java.name -> LoginFragment()
             else -> super.instantiate(classLoader, className)
         }
 

@@ -51,6 +51,7 @@ class LoginFragment : Fragment() {
                     checkEmailVerified()
                 }else{
                     println("authentication failed") //!!!!!!!!!!!!!!!!!!!!!!!!! Toast
+                    auth.signOut()
                 }
             }
     }

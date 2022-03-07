@@ -38,6 +38,7 @@
     <string name="max_4_routes_can_be_added">Max 4 routes can be added</string>
     <string name="max_number_of_locations">Max number of locations</string>
     <string name="max_distance">Max distance(m)(circle)</string>
+    <string name="new_email">New e-mail</string>
     <string name="no_comment_yet">No comment has been made on this place yet</string>
     <string name="not_found_info">Sorry, no information found about this place</string>
     <string name="not_visited">Not visited</string>

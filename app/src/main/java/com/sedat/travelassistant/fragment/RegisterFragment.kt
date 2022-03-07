@@ -1,5 +1,6 @@
 package com.sedat.travelassistant.fragment
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -17,11 +18,19 @@ import com.google.firebase.ktx.Firebase
 import com.sedat.travelassistant.MainActivity
 import com.sedat.travelassistant.R
 import com.sedat.travelassistant.databinding.FragmentRegisterBinding
+import com.sedat.travelassistant.repo.PlaceRepositoryInterface
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class RegisterFragment : Fragment() {
+@AndroidEntryPoint
+class RegisterFragment: Fragment() {
 
     private var fragmentBinding: FragmentRegisterBinding ?= null
     private val binding get() = fragmentBinding!!
+
+    @Inject
+    lateinit var repository: PlaceRepositoryInterface
 
     private lateinit var auth: FirebaseAuth
     private var firestore: FirebaseFirestore ?= null
@@ -62,12 +71,9 @@ class RegisterFragment : Fragment() {
                     val userId = task.result.user?.uid
                     if(userId != null){
                         saveUserInfoForFirebase(mail, username, userId)
-                    }
+                        //sendVerificationEmail()
+                        repository.sendVerificationEmail {
 
-                    auth.addAuthStateListener {
-                        val user = it.currentUser
-                        if(user != null){
-                            sendVerificationEmail()
                         }
                     }
                 }else
@@ -82,12 +88,13 @@ class RegisterFragment : Fragment() {
                     if(it.isSuccessful){
                         Toast.makeText(requireContext(), "doğrulama linki gönderildi", Toast.LENGTH_LONG).show()
                         auth.signOut()
-                        activity?.let {
-                            it.finish()
-                            startActivity(it.intent)
+                        activity?.let { fragmentActivity ->
+                            fragmentActivity.finish()
+                            startActivity(fragmentActivity.intent)
                         }
                     }else{
-                        //hata
+                        auth.signOut()
+                        Toast.makeText(requireContext(), "doğrulama linki gönderilemedi", Toast.LENGTH_LONG).show()
                     }
                 }
         }
@@ -104,13 +111,6 @@ class RegisterFragment : Fragment() {
             user["username"] = username
 
             ref.set(user)
-                .addOnSuccessListener {
-                    Toast.makeText(requireContext(), getString(R.string.accounts_were_created), Toast.LENGTH_LONG).show()
-                    activity?.let {
-                        val intent = Intent(activity, MainActivity::class.java)
-                        it.startActivity(intent)
-                    }
-                }
         }
     }
 }

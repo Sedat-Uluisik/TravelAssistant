@@ -56,7 +56,13 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun injectRepo(@ForPlaces placesApi: PlacesApi, @ForRoute placesApiForRoute: PlacesApi, dbFirestore: FirebaseFirestore, @ApplicationContext context: Context) = PlaceRepository(placesApi, placesApiForRoute, dbFirestore, context) as PlaceRepositoryInterface
+    fun injectRepo(
+        @ForPlaces placesApi: PlacesApi,
+        @ForRoute placesApiForRoute: PlacesApi,
+        dbFirestore: FirebaseFirestore,
+        @ApplicationContext context: Context,
+        auth: FirebaseAuth
+    ) = PlaceRepository(placesApi, placesApiForRoute, dbFirestore, auth, context) as PlaceRepositoryInterface
 
     @Singleton
     @Provides

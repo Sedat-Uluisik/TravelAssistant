@@ -1,7 +1,10 @@
 package com.sedat.travelassistant.repo
 
+import android.app.Activity
 import android.content.Context
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,6 +33,7 @@ class PlaceRepository @Inject constructor(
         private val placesApi: PlacesApi,
         private val placesApiForRoute: PlacesApi,
         private val dbFirestore: FirebaseFirestore,
+        private val auth: FirebaseAuth,
         @ApplicationContext private val context: Context
 ): PlaceRepositoryInterface {
 
@@ -362,6 +366,23 @@ class PlaceRepository @Inject constructor(
                         listener(user)
                 }
             }
+    }
+
+    override fun sendVerificationEmail(listener: (Boolean) -> Unit) {
+        if(auth.currentUser != null){
+            auth.currentUser!!.sendEmailVerification()
+                .addOnCompleteListener {
+                    if(it.isSuccessful){
+                        Toast.makeText(context, "doğrulama linki gönderildi", Toast.LENGTH_LONG).show()
+                        auth.signOut()
+                        listener(true)
+                    }else{
+                        auth.signOut()
+                        Toast.makeText(context, "doğrulama linki gönderilemedi", Toast.LENGTH_LONG).show()
+                        listener(false)
+                    }
+                }
+        }
     }
 
     private fun sendComment(comment: Comment, docRef: DocumentReference, callBack: (Boolean) -> Unit){

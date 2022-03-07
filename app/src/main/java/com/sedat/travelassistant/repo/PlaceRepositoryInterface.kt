@@ -1,5 +1,6 @@
 package com.sedat.travelassistant.repo
 
+import android.app.Activity
 import com.sedat.travelassistant.model.Place
 import com.sedat.travelassistant.model.Properties
 import com.sedat.travelassistant.model.firebase.Comment
@@ -46,4 +47,5 @@ interface PlaceRepositoryInterface {
     fun deleteComment(placeId: String, commentId: String, userId: String)
     fun getRating(placeId: String, listener: (Float) -> Unit)
     fun getUserInfo(userId: String, listener: (User) -> Unit)
+    fun sendVerificationEmail(listener: (Boolean) -> Unit)
 }
