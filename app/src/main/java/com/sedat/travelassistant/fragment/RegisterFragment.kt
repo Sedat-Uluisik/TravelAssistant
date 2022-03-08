@@ -73,7 +73,12 @@ class RegisterFragment: Fragment() {
                         saveUserInfoForFirebase(mail, username, userId)
                         //sendVerificationEmail()
                         repository.sendVerificationEmail {
-
+                            if(it){
+                                activity?.let { fragmentActivity ->
+                                    fragmentActivity.finish()
+                                    startActivity(fragmentActivity.intent)
+                                }
+                            }
                         }
                     }
                 }else

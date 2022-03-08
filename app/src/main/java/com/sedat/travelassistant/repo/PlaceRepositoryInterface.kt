@@ -43,9 +43,10 @@ interface PlaceRepositoryInterface {
     fun checkLocationInDatabase(place: Properties, listener: (List<Comment>, error: String) -> Unit)
     fun postComment(place: Properties, comment: Comment, callBack: (Boolean) -> Unit)
     fun likeOrDislikeButtonClick(placeId: String, commentId: String, userId: String, likeOrDislike: Boolean)
-    fun updateComment(placeId: String, commentId: String, userId: String)
+    fun updateComment(placeId: String, comment: Comment, listener: (Boolean) -> Unit)
     fun deleteComment(placeId: String, commentId: String, userId: String)
     fun getRating(placeId: String, listener: (Float) -> Unit)
+    fun updateRating(placeId: String,oldRating: Float, newRating: Float)
     fun getUserInfo(userId: String, listener: (User) -> Unit)
     fun sendVerificationEmail(listener: (Boolean) -> Unit)
 }

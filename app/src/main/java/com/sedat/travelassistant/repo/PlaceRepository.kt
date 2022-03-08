@@ -25,6 +25,13 @@ import com.sedat.travelassistant.model.room.ImagePath
 import com.sedat.travelassistant.model.room.SavedPlace
 import com.sedat.travelassistant.model.route.Route
 import com.sedat.travelassistant.room.TravelDatabase
+import com.sedat.travelassistant.util.firebasereferences.References
+import com.sedat.travelassistant.util.firebasereferences.References.comments
+import com.sedat.travelassistant.util.firebasereferences.References.dislikeNumber
+import com.sedat.travelassistant.util.firebasereferences.References.likeNumber
+import com.sedat.travelassistant.util.firebasereferences.References.likeOrDislike
+import com.sedat.travelassistant.util.firebasereferences.References.likeOrDislikeNumber
+import com.sedat.travelassistant.util.firebasereferences.References.locations
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.Single
 import javax.inject.Inject
@@ -159,114 +166,179 @@ class PlaceRepository @Inject constructor(
         likeOrDislike = false -> dislike button click
          */
 
-        val commentRef = dbFirestore.collection("Locations")
-                .document(placeId)
-                .collection("Comments")
-                .document(commentId)
+        val commentRef = dbFirestore.collection(locations).document(placeId).collection(comments).document(commentId)
+        val likeDislikeRef = dbFirestore.collection(locations).document(placeId).collection(comments).document(commentId)
+            .collection(likeOrDislikeNumber).document(userId)
 
-        val commentLikeOrDislikeRef = commentRef.collection("LikeOrDislikeNumber")
-            .document(userId)
+        likeDislikeRef.get()
+            .addOnSuccessListener { doc ->
+                if(doc.data == null){ //first like/dislike
+                    incrementLikeOrDislikeNumber(commentRef, likeDislikeRef, likeOrDislike)
+                }else{ //convert to like -> dislike or dislike -> like
+                    switchLikeToDislikeOrDislikeToLike(commentRef, likeDislikeRef, likeOrDislike)
+                }
+            }
+    }
+    private fun switchLikeToDislikeOrDislikeToLike(commentRef: DocumentReference, likeDislikeRef: DocumentReference, likeOrDislike: Boolean){
+        likeDislikeRef.get()
+            .addOnSuccessListener {
+                if(it.data != null){
+                    val oldValue = it.get(References.likeOrDislike)
+                    if(oldValue != likeOrDislike){
+                        if(likeOrDislike){ //increment like number and decrement dislike number
+                            likeDislikeRef.update(mapOf(
+                                References.likeOrDislike to true
+                            ))
 
-        commentLikeOrDislikeRef.get()
-            .addOnSuccessListener { document ->
-                if(document.data == null){
-                    val data = HashMap<String, Any>()
-                    data["likeOrDislike"] = likeOrDislike
+                            commentRef.get()
+                                .addOnSuccessListener{ doc ->
+                                if(doc != null){
+                                    var likeNumber = doc.get(likeNumber).toString().toInt()
+                                    var dislikeNumber = doc.get(dislikeNumber).toString().toInt()
 
-                    commentLikeOrDislikeRef.set(data)
-                        .addOnCompleteListener {
-                            if(it.isSuccessful){
-
-                                commentRef.get() //update comment like or dislike number
-                                    .addOnSuccessListener {
-                                        val comment = it.toObject(Comment::class.java)
-                                        if(comment != null){
-                                            if(likeOrDislike){
-                                                var like = comment.likeNumber
-                                                like++
-                                                commentRef.update("likeNumber", like)
-                                            }
-                                            else{
-                                                var dislike = comment.dislikeNumber
-                                                dislike++
-                                                commentRef.update("dislikeNumber", dislike)
-                                            }
-                                        }
-                                    }
-                            }
-                        }
-
-                }else{ //update comment like and dislike number
-                    if(document.get("likeOrDislike") != likeOrDislike){
-                        commentLikeOrDislikeRef.update("likeOrDislike", likeOrDislike)
-
-                        commentRef.get()
-                            .addOnSuccessListener { doc ->
-                                if(likeOrDislike){ //increase like number and decrease dislike number
-                                    if(doc != null){
-
-                                        var like = doc.get("likeNumber").toString().toInt()
-                                        var dislike = doc.get("dislikeNumber").toString().toInt()
-
-                                        println(like)
-                                        println(dislike)
-
-                                        like++
-                                        if(dislike > 0)
-                                            dislike--
-
-                                        commentRef.update(mapOf(
-                                            "likeNumber" to like,
-                                            "dislikeNumber" to dislike
-                                        ))
-
-                                        /*var like = doc.get("likeNumber").toString().toInt()
-                                        like++
-                                        commentRef.update("likeNumber", like)
-                                            .addOnSuccessListener {
-                                                var dislike = doc.get("dislikeNumber").toString().toInt()
-                                                if(dislike > 0){
-                                                    dislike--
-                                                    commentRef.update("dislikeNumber", dislike)
-                                                }
-                                            }*/
-                                    }
-                                }else{ //increase dislike number decrease  like number
-                                    if(doc != null){
-                                        var like = doc.get("likeNumber").toString().toInt()
-                                        var dislike = doc.get("dislikeNumber").toString().toInt()
-
-                                        println(like)
-                                        println(dislike)
-
-                                        dislike++
-                                        if(like > 0)
-                                            like--
-
-                                        commentRef.update(mapOf(
-                                            "likeNumber" to like,
-                                            "dislikeNumber" to dislike
-                                        ))
-
-                                        /*var dislike = doc.get("dislikeNumber").toString().toInt()
-                                        dislike++
-                                        commentRef.update("dislikeNumber", dislike)
-                                            .addOnSuccessListener {
-                                                var like = doc.get("likeNumber").toString().toInt()
-                                                if(like > 0){
-                                                    like--
-                                                    commentRef.update("likeNumber", like)
-                                                }
-                                            }*/
-                                    }
+                                    likeNumber++
+                                    dislikeNumber--
+                                    commentRef.update(mapOf(
+                                        References.likeNumber to likeNumber,
+                                        References.dislikeNumber to dislikeNumber
+                                    ))
                                 }
                             }
+
+                            /*
+                            commentRef.addSnapshotListener { value, error ->
+                                if(value != null && error == null){
+                                    var likeNumber = value.get(likeNumber).toString().toInt()
+                                    var dislikeNumber = value.get(dislikeNumber).toString().toInt()
+
+                                    likeNumber++
+                                    dislikeNumber--
+                                    commentRef.update(mapOf(
+                                        References.likeNumber to likeNumber,
+                                        References.dislikeNumber to dislikeNumber
+                                    ))
+                                }
+                            }
+                             */
+                        }else{ //decrement like number and increment dislike number
+                            likeDislikeRef.update(mapOf(
+                                References.likeOrDislike to false
+                            ))
+
+                            commentRef.get()
+                                .addOnSuccessListener{ doc ->
+                                if(doc != null){
+                                    var likeNumber = doc.get(likeNumber).toString().toInt()
+                                    var dislikeNumber = doc.get(dislikeNumber).toString().toInt()
+
+                                    likeNumber--
+                                    dislikeNumber++
+                                    commentRef.update(mapOf(
+                                        References.likeNumber to likeNumber,
+                                        References.dislikeNumber to dislikeNumber
+                                    ))
+                                }
+                            }
+
+                            /*
+                            commentRef.addSnapshotListener { value, error ->
+                                if(value != null && error == null){
+                                    var likeNumber = value.get(likeNumber).toString().toInt()
+                                    var dislikeNumber = value.get(dislikeNumber).toString().toInt()
+
+                                    likeNumber--
+                                    dislikeNumber++
+                                    commentRef.update(mapOf(
+                                        References.likeNumber to likeNumber,
+                                        References.dislikeNumber to dislikeNumber
+                                    ))
+                                }
+                            }
+                             */
+                        }
                     }
                 }
             }
     }
+    private fun incrementLikeOrDislikeNumber(commentRef: DocumentReference, likeDislikeRef: DocumentReference, likeOrDislike: Boolean){
+        commentRef.get()
+            .addOnSuccessListener{ doc ->
+            if(doc != null){
+                var likeNumber = doc.get("likeNumber").toString().toFloat()
+                var dislikeNumber = doc.get("dislikeNumber").toString().toFloat()
+                if(likeOrDislike){ //increment like number
+                    likeNumber++
+                   commentRef.update(mapOf(
+                        "likeNumber" to likeNumber
+                    )).addOnSuccessListener {
+                        val map = HashMap<String, Any>()
+                        map["likeOrDislike"] = true
+                        likeDislikeRef.set(map)
+                    }
+                }else{ //increment dislike number
+                    dislikeNumber--
+                   commentRef.update(mapOf(
+                        "dislikeNumber" to dislikeNumber
+                    )).addOnSuccessListener {
+                        val map = HashMap<String, Any>()
+                        map["likeOrDislike"] = false
+                        likeDislikeRef.set(map)
+                    }
+                }
+            }
+        }
 
-    override fun updateComment(placeId: String, commentId: String, userId: String) {
+        /*
+        commentRef.addSnapshotListener { value, error ->
+            if(value != null && error == null){
+                var likeNumber = value.get("likeNumber").toString().toFloat()
+                var dislikeNumber = value.get("dislikeNumber").toString().toFloat()
+                if(likeOrDislike){ //increment like number
+                    likeNumber++
+                    commentRef.update(mapOf(
+                        "likeNumber" to likeNumber
+                    )).addOnSuccessListener {
+                        val map = HashMap<String, Any>()
+                        map["likeOrDislike"] = true
+                        likeDislikeRef.set(map)
+                    }
+                }else{ //increment dislike number
+                    dislikeNumber--
+                    commentRef.update(mapOf(
+                        "dislikeNumber" to dislikeNumber
+                    )).addOnSuccessListener {
+                        val map = HashMap<String, Any>()
+                        map["likeOrDislike"] = false
+                        likeDislikeRef.set(map)
+                    }
+                }
+            }
+        }
+         */
+    }
+
+    override fun updateComment(placeId: String, comment: Comment, listener: (Boolean) -> Unit) {
+        val commentRef = dbFirestore
+            .collection("Locations")
+            .document(placeId)
+            .collection("Comments")
+            .document(comment.commentId)
+
+        commentRef.get()
+            .addOnCompleteListener { task ->
+                if(task.isSuccessful){
+                    commentRef.update(mapOf(
+                        "comment" to comment.Comment,
+                        "date" to System.currentTimeMillis(),
+                        "rating" to comment.rating
+                    )).addOnCompleteListener {
+                        if(it.isSuccessful)
+                            listener(true)
+                        else
+                            listener(false)
+                    }
+                }
+            }
 
     }
 
@@ -352,6 +424,25 @@ class PlaceRepository @Inject constructor(
             if(error != null)
                 listener(0.0f)
         }
+    }
+
+    override fun updateRating(placeId: String, oldRating: Float, newRating: Float) {
+        val placeRef = dbFirestore
+            .collection("Locations")
+            .document(placeId)
+
+        placeRef.get()
+            .addOnSuccessListener { doc ->
+                if(doc.data != null){
+                    var rating = doc.get("rating").toString().toFloat()
+                    rating -= oldRating
+                    rating += newRating
+
+                    placeRef.update(mapOf(
+                        "rating" to rating
+                    ))
+                }
+            }
     }
 
     override fun getUserInfo(userId: String, listener: (User) -> Unit) {

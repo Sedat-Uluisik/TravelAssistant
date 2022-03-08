@@ -110,8 +110,9 @@ class DetailsFragmentViewModel @Inject constructor(
 
     fun likeOrDislikeButtonClick(placeId: String, commentId: String, userId: String, likeOrDislike: Boolean) = repository.likeOrDislikeButtonClick(placeId, commentId, userId, likeOrDislike)
 
-    fun updateComment(placeId: String, commentId: String, userId: String) = repository.updateComment(placeId, commentId, userId)
+    fun updateComment(placeId: String, comment: Comment, listener: (Boolean) -> Unit) = repository.updateComment(placeId, comment, listener)
     fun deleteComment(placeId: String, commentId: String, userId: String) = repository.deleteComment(placeId, commentId, userId)
+    fun updateRating(placeId: String, oldRating: Float, newRating: Float) = repository.updateRating(placeId, oldRating, newRating)
 
     fun clearData(){
         imageList.value = null

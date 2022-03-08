@@ -35,8 +35,8 @@ class CommentAdapter @Inject constructor(
     fun likeDislikeButton(listener: (String, Int) -> Unit){
         onLikeDislikeButtonClick = listener
     }
-    private var onMoreButtonClick: ((String, String, View) -> Unit) ?= null
-    fun moreButtonClickListener(listener: (String, String, View) -> Unit){
+    private var onMoreButtonClick: ((Comment, View) -> Unit) ?= null
+    fun moreButtonClickListener(listener: (Comment, View) -> Unit){
         onMoreButtonClick = listener
     }
 
@@ -65,7 +65,7 @@ class CommentAdapter @Inject constructor(
         }
         holder.item.commentMoreButton.setOnClickListener { v ->
             onMoreButtonClick?.let {
-                it(comment.commentId, comment.userId, v)
+                it(comment, v)
             }
         }
     }

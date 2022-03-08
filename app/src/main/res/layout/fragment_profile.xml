@@ -30,6 +30,13 @@
                     android:gravity="center_vertical"
                     android:padding="5dp">
 
+                    <ImageView
+                        android:id="@+id/cancel_username_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/close_purple_32"
+                        android:visibility="gone"/>
+
                     <EditText
                         android:id="@+id/username_profile"
                         android:layout_width="0dp"
@@ -63,6 +70,13 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:padding="5dp">
+
+                    <ImageView
+                        android:id="@+id/cancel_email_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/close_purple_32"
+                        android:visibility="gone"/>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -124,29 +138,13 @@
 
                     </LinearLayout>
 
-                    <RelativeLayout
+                    <ImageView
+                        android:id="@+id/update_btn_email"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/cancel_update_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/close_purple_32"
-                            android:layout_alignParentTop="true"
-                            android:layout_centerHorizontal="true"
-                            android:visibility="gone"/>
-
-                        <ImageView
-                            android:id="@+id/update_btn_email"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/update_32"
-                            android:layout_centerVertical="true"
-                            android:layout_centerHorizontal="true"/>
-
-                    </RelativeLayout>
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/update_32"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"/>
 
                 </LinearLayout>
 
@@ -157,6 +155,13 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:padding="5dp">
+
+                    <ImageView
+                        android:id="@+id/cancel_password_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/close_purple_32"
+                        android:visibility="gone"/>
 
                     <EditText
                         android:id="@+id/pass_profile"

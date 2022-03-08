@@ -95,21 +95,21 @@ class ProfileFragment @Inject constructor(
                     binding.passProfileForUpdateMail.isEnabled = true
                     binding.mailProfileNew.visibility = View.VISIBLE
                     binding.passProfileForUpdateMail.visibility = View.VISIBLE
-                    binding.cancelUpdateBtn.visibility = View.VISIBLE
+                    binding.cancelEmailBtn.visibility = View.VISIBLE
                     isUpdateEmail = !isUpdateEmail
                 }else
                     updateEmail()
             }
         }
 
-        binding.cancelUpdateBtn.setOnClickListener {
+        binding.cancelEmailBtn.setOnClickListener {
             binding.mailLayout.setBackgroundColor(Color.WHITE)
             binding.mailCurrentProfile.alpha = 0.9f
             binding.mailProfileNew.isEnabled = false
             binding.passProfileForUpdateMail.isEnabled = false
             binding.mailProfileNew.visibility = View.GONE
             binding.passProfileForUpdateMail.visibility = View.GONE
-            binding.cancelUpdateBtn.visibility = View.GONE
+            binding.cancelEmailBtn.visibility = View.GONE
             isUpdateEmail = false
         }
 
@@ -119,6 +119,7 @@ class ProfileFragment @Inject constructor(
                     binding.usernameProfile.isEnabled = true
                     binding.usernameProfile.alpha = 1.0f
                     binding.updateBtnUsername.setColorFilter(ContextCompat.getColor(requireContext(), R.color.green1))
+                    binding.cancelUsernameBtn.visibility = View.VISIBLE
                     isUpdateUsername = true
                 }else{
                     val username = binding.usernameProfile.text.toString()
@@ -129,6 +130,38 @@ class ProfileFragment @Inject constructor(
                 }
             }
         }
+        binding.cancelUsernameBtn.setOnClickListener {
+            binding.usernameProfile.isEnabled = false
+            binding.usernameProfile.alpha = 0.9f
+            binding.updateBtnUsername.colorFilter = null
+            binding.cancelUsernameBtn.visibility = View.GONE
+            isUpdateUsername = false
+        }
+
+        binding.updateBtnPassword.setOnClickListener { viewBtn ->
+           if(auth.currentUser != null){
+               if(!isUpdatePassword){
+                   binding.passProfile.alpha = 1.0f
+                   binding.passProfile.isEnabled = true
+                   binding.updateBtnPassword.setColorFilter(ContextCompat.getColor(requireContext(), R.color.green1))
+                   binding.cancelPasswordBtn.visibility = View.VISIBLE
+                   isUpdatePassword = true
+               }else{
+                   val password = binding.passProfile.text.toString()
+                   if(password.isNotEmpty())
+                       updatePassword(password)
+                   else
+                       Toast.makeText(requireContext(), "şifrenizi giriniz", Toast.LENGTH_SHORT).show()
+               }
+           }
+        }
+        binding.cancelPasswordBtn.setOnClickListener {
+            binding.passProfile.alpha = 0.9f
+            binding.passProfile.isEnabled = false
+            binding.updateBtnPassword.colorFilter = null
+            binding.cancelPasswordBtn.visibility = View.GONE
+            isUpdatePassword = false
+        }
     }
 
     private fun getUserInfo(userId: String){
@@ -136,6 +169,21 @@ class ProfileFragment @Inject constructor(
             binding.usernameProfile.setText(it.username)
             binding.mailCurrentProfile.setText(it.mail)
         }
+    }
+
+    private fun updatePassword(password: String){
+        auth.currentUser!!.updatePassword(password)
+            .addOnCompleteListener {
+                if(it.isSuccessful){
+                    binding.passProfile.alpha = 0.9f
+                    binding.passProfile.isEnabled = false
+                    binding.updateBtnPassword.colorFilter = null
+                    binding.cancelPasswordBtn.visibility = View.GONE
+                    isUpdatePassword = false
+
+                    Toast.makeText(requireContext(), "şifre değiştirildi", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 
     private fun updateUsername(username: String){
