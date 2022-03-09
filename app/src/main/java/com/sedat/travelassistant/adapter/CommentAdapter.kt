@@ -17,10 +17,12 @@ class CommentAdapter @Inject constructor(
 
     private val diffUtil = object :DiffUtil.ItemCallback<Comment>(){
         override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean {
-            return oldItem == newItem
+            //Burada genellikle, item'lerin benzersiz id'leri varsa id'ler karşılaştırılır.
+            return oldItem.commentId == newItem.commentId
         }
 
         override fun areContentsTheSame(oldItem: Comment, newItem: Comment): Boolean {
+            //Burada item'lerin içerikleri karşılaştırılır, eğer değişiklik varsa gösterilir.
             return oldItem == newItem
         }
     }

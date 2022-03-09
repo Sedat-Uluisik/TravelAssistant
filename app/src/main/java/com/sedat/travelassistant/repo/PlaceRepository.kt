@@ -5,10 +5,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import com.sedat.travelassistant.R
@@ -193,8 +190,8 @@ class PlaceRepository @Inject constructor(
                             commentRef.get()
                                 .addOnSuccessListener{ doc ->
                                 if(doc != null){
-                                    var likeNumber = doc.get(likeNumber).toString().toInt()
-                                    var dislikeNumber = doc.get(dislikeNumber).toString().toInt()
+                                    var likeNumber = doc.get(likeNumber).toString().toFloat().toInt()
+                                    var dislikeNumber = doc.get(dislikeNumber).toString().toFloat().toInt()
 
                                     likeNumber++
                                     dislikeNumber--
@@ -205,8 +202,8 @@ class PlaceRepository @Inject constructor(
                                 }
                             }
 
-                            /*
-                            commentRef.addSnapshotListener { value, error ->
+
+                            /*commentRef.addSnapshotListener { value, error ->
                                 if(value != null && error == null){
                                     var likeNumber = value.get(likeNumber).toString().toInt()
                                     var dislikeNumber = value.get(dislikeNumber).toString().toInt()
@@ -218,8 +215,8 @@ class PlaceRepository @Inject constructor(
                                         References.dislikeNumber to dislikeNumber
                                     ))
                                 }
-                            }
-                             */
+                            }*/
+
                         }else{ //decrement like number and increment dislike number
                             likeDislikeRef.update(mapOf(
                                 References.likeOrDislike to false
@@ -228,8 +225,8 @@ class PlaceRepository @Inject constructor(
                             commentRef.get()
                                 .addOnSuccessListener{ doc ->
                                 if(doc != null){
-                                    var likeNumber = doc.get(likeNumber).toString().toInt()
-                                    var dislikeNumber = doc.get(dislikeNumber).toString().toInt()
+                                    var likeNumber = doc.get(likeNumber).toString().toFloat().toInt()
+                                    var dislikeNumber = doc.get(dislikeNumber).toString().toFloat().toInt()
 
                                     likeNumber--
                                     dislikeNumber++
@@ -240,8 +237,8 @@ class PlaceRepository @Inject constructor(
                                 }
                             }
 
-                            /*
-                            commentRef.addSnapshotListener { value, error ->
+
+                            /*commentRef.addSnapshotListener { value, error ->
                                 if(value != null && error == null){
                                     var likeNumber = value.get(likeNumber).toString().toInt()
                                     var dislikeNumber = value.get(dislikeNumber).toString().toInt()
@@ -253,8 +250,8 @@ class PlaceRepository @Inject constructor(
                                         References.dislikeNumber to dislikeNumber
                                     ))
                                 }
-                            }
-                             */
+                            }*/
+
                         }
                     }
                 }
@@ -264,8 +261,8 @@ class PlaceRepository @Inject constructor(
         commentRef.get()
             .addOnSuccessListener{ doc ->
             if(doc != null){
-                var likeNumber = doc.get("likeNumber").toString().toFloat()
-                var dislikeNumber = doc.get("dislikeNumber").toString().toFloat()
+                var likeNumber = doc.get("likeNumber").toString().toFloat().toInt()
+                var dislikeNumber = doc.get("dislikeNumber").toString().toFloat().toInt()
                 if(likeOrDislike){ //increment like number
                     likeNumber++
                    commentRef.update(mapOf(
@@ -276,7 +273,7 @@ class PlaceRepository @Inject constructor(
                         likeDislikeRef.set(map)
                     }
                 }else{ //increment dislike number
-                    dislikeNumber--
+                    dislikeNumber++
                    commentRef.update(mapOf(
                         "dislikeNumber" to dislikeNumber
                     )).addOnSuccessListener {
@@ -288,8 +285,8 @@ class PlaceRepository @Inject constructor(
             }
         }
 
-        /*
-        commentRef.addSnapshotListener { value, error ->
+
+        /*commentRef.addSnapshotListener { value, error ->
             if(value != null && error == null){
                 var likeNumber = value.get("likeNumber").toString().toFloat()
                 var dislikeNumber = value.get("dislikeNumber").toString().toFloat()
@@ -313,8 +310,8 @@ class PlaceRepository @Inject constructor(
                     }
                 }
             }
-        }
-         */
+        }*/
+
     }
 
     override fun updateComment(placeId: String, comment: Comment, listener: (Boolean) -> Unit) {
@@ -359,6 +356,9 @@ class PlaceRepository @Inject constructor(
 
                     ref2.collection("LikeOrDislikeNumber")
                         .addSnapshotListener { value, error ->
+
+                            println("yorum silme snapshot u")
+
                             if(value != null && value.documents.isNotEmpty()){
                                 for (i in value.documents){  //yoruma ait beğenen ve beğenmeyen kullanıcılar koleksiyonu silinir.
                                     i.reference.delete()
@@ -393,6 +393,7 @@ class PlaceRepository @Inject constructor(
 
                         newRef.orderBy("date", Query.Direction.DESCENDING)
                             .addSnapshotListener { snapshot, error ->
+
                                 if(error != null){
                                     listener(listOf(),error.message.toString())
                                     return@addSnapshotListener
@@ -415,6 +416,7 @@ class PlaceRepository @Inject constructor(
         val ref = dbFirestore.collection("Locations").document(placeId) //yorumlarda değişiklikler olduğunda güncel değerleri alabilmek için yeniden referans ve listener oluşturuldu.
 
         ref.addSnapshotListener { value, error ->
+
             if(value != null){
                 val rating = value.get("rating").toString().toFloat()
                 listener(rating)
@@ -448,6 +450,7 @@ class PlaceRepository @Inject constructor(
     override fun getUserInfo(userId: String, listener: (User) -> Unit) {
         dbFirestore.collection("Users").document(userId)
             .addSnapshotListener { value, error ->
+
                 if(error != null)
                     return@addSnapshotListener
 

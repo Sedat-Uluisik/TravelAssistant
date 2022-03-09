@@ -201,6 +201,7 @@ class DetailsFragment @Inject constructor(
         }
         //get comment list
         viewModel.commentList.observe(viewLifecycleOwner){
+
             if(it.isNotEmpty()){
                 binding.includedCommentLayout.commentNotFound.visibility = View.GONE
                 commentAdapter.commentList = it
