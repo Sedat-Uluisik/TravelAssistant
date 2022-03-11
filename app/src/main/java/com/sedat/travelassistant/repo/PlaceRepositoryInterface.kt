@@ -49,4 +49,6 @@ interface PlaceRepositoryInterface {
     fun updateRating(placeId: String,oldRating: Float, newRating: Float)
     fun getUserInfo(userId: String, listener: (User) -> Unit)
     fun sendVerificationEmail(listener: (Boolean) -> Unit)
+
+    fun saveLocationsToFirebase(locationList: List<SavedPlace>, userId: String)
 }

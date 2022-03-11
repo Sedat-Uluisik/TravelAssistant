@@ -8,4 +8,5 @@ object References {
     const val likeNumber = "likeNumber"
     const val dislikeNumber = "dislikeNumber"
     const val likeOrDislike = "likeOrDislike"
+    const val userSavedLocations = "UserSavedLocations"
 }

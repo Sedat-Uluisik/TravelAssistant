@@ -67,7 +67,7 @@ class SavedPlacesViewModel @Inject constructor(
     private suspend fun saveImagePaths(context: Context, root_id: Int, pickCamera: Boolean){
         /*
             Kameradan resim seçince resim dosyasını otomatik otuşurur.
-            Galeriden resim seçince resmi dosyaya menuel olarak kaydetmemiz gerekir.
+            Galeriden resim seçince resmi dosyaya manuel olarak kaydetmemiz gerekir.
             Eğer pickCamera doğru ise yeniden dosya oluşturmadan direk url si alınıp kaydedilir, aksi takdirde aynı resimden iki tane kaydedilmiş olur.
             Eğer pickCamera yanlış ise resim galeriden seçilmiş demektir ve dosya içine manuel kaydedilmesi gerekir.
              */
@@ -139,6 +139,14 @@ class SavedPlacesViewModel @Inject constructor(
                     for (i in it)
                         println(i.name + i.rowid + " " + i.lat + " " + i.lon)
                 }
+            }
+        }
+    }
+
+    fun saveLocationsToFirebase(userId: String){
+        if(placeList.value != null){
+            if (placeList.value!!.isNotEmpty()){
+                repository.saveLocationsToFirebase(placeList.value!!, userId)
             }
         }
     }

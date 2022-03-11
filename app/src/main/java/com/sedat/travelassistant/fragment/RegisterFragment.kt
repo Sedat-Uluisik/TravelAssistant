@@ -86,7 +86,7 @@ class RegisterFragment: Fragment() {
             }
     }
 
-    private fun sendVerificationEmail(){
+    /*private fun sendVerificationEmail(){
         if(auth.currentUser != null){
             auth.currentUser!!.sendEmailVerification()
                 .addOnCompleteListener {
@@ -103,7 +103,7 @@ class RegisterFragment: Fragment() {
                     }
                 }
         }
-    }
+    }*/
 
     private fun saveUserInfoForFirebase(mail: String, username: String, userId: String){
         if(firestore != null){

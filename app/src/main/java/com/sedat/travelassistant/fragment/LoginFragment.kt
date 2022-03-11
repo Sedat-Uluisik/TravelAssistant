@@ -50,7 +50,7 @@ class LoginFragment : Fragment() {
                 if(task.isSuccessful){
                     checkEmailVerified()
                 }else{
-                    println("authentication failed") //!!!!!!!!!!!!!!!!!!!!!!!!! Toast
+                    Toast.makeText(requireContext(), getString(R.string.authentication_failed), Toast.LENGTH_SHORT).show()
                     auth.signOut()
                 }
             }
@@ -62,10 +62,11 @@ class LoginFragment : Fragment() {
                 activity?.let {
                     val intent = Intent(activity, MainActivity::class.java)
                     it.startActivity(intent)
+                    it.finish()
                 }
             }else{
                 auth.signOut()
-                Toast.makeText(requireContext(), "mail doğrulaması gerekiyor", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(R.string.e_mail_verification_required), Toast.LENGTH_LONG).show()
             }
         }
     }

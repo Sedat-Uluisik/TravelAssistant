@@ -15,13 +15,16 @@
     <string name="close">Kapat</string>
     <string name="comment">Yorum yap</string>
     <string name="comment_sent">Yorum gönderildi</string>
+    <string name="comment_updated">Yorum güncellendi</string>
     <string name="delete">Sil</string>
     <string name="details">Detaylar</string>
     <string name="district">Semt</string>
     <string name="e_mail">E-mail</string>
+    <string name="e_mail_verification_required">E-posta doğrulaması gerekiyor</string>
     <string name="error">Hata</string>
     <string name="error_for_account">Yorum yapmak için oturum açmanız gerekir</string>
     <string name="error_location">Konumun açık olduğundan emin olun!</string>
+    <string name="error_comment_not_updated">Hata!!, yorum güncellenemedi</string>
     <string name="gallery">Galeri</string>
     <string name="give_permission">İzin Ver</string>
     <string name="images">Resimler</string>

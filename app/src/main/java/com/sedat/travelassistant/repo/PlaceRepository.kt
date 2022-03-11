@@ -29,9 +29,13 @@ import com.sedat.travelassistant.util.firebasereferences.References.likeNumber
 import com.sedat.travelassistant.util.firebasereferences.References.likeOrDislike
 import com.sedat.travelassistant.util.firebasereferences.References.likeOrDislikeNumber
 import com.sedat.travelassistant.util.firebasereferences.References.locations
+import com.sedat.travelassistant.util.firebasereferences.References.userSavedLocations
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.Single
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 
 class PlaceRepository @Inject constructor(
         private val placesApi: PlacesApi,
@@ -477,6 +481,30 @@ class PlaceRepository @Inject constructor(
                     }
                 }
         }
+    }
+
+    override fun saveLocationsToFirebase(locationList: List<SavedPlace>, userId: String) {
+        val savedPlaceRef = dbFirestore
+            .collection(userSavedLocations)
+            .document(userId)
+            .collection(locations)
+
+        for (i in locationList){
+            val map = HashMap<String, Any>()
+            map["rowid"] = i.rowid
+            map["name"] = i.name
+            map["city"] = i.city
+            map["district"] = i.district
+            map["address"] = i.address
+            map["state"] = i.state
+            map["street"] = i.street
+            map["suburb"] = i.suburb
+            map["lat"] = i.lat
+            map["lon"] = i.lon
+
+            savedPlaceRef.document("${i.lat}_${i.lon}").set(map)
+        }
+            Toast.makeText(context, "buluta yükleme başarılı", Toast.LENGTH_LONG).show()
     }
 
     private fun sendComment(comment: Comment, docRef: DocumentReference, callBack: (Boolean) -> Unit){

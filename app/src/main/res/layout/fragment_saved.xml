@@ -11,32 +11,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_margin="3dp"
-        android:background="@drawable/search_bar_back">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:padding="3dp"
-            app:endIconMode="clear_text"
-            tools:ignore="NestedWeights">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/search_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:hint="@string/search"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
+        android:layout_margin="3dp">
 
         <ImageView
+            android:id="@+id/sync_btn"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/search_24"
+            android:src="@drawable/sync_24"
             android:background="@drawable/background_2"
             android:padding="6dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/search_bar_back"
+            android:layout_marginStart="3dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:padding="3dp"
+                app:endIconMode="clear_text"
+                tools:ignore="NestedWeights">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/search_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="@string/search"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/search_24"
+                android:background="@drawable/background_2"
+                android:padding="6dp"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

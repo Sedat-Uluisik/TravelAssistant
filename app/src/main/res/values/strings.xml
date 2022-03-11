@@ -14,13 +14,16 @@
     <string name="close">Close</string>
     <string name="comment">To comment</string>
     <string name="comment_sent">Comment sent</string>
+    <string name="comment_updated">Comment updated</string>
     <string name="delete">Delete</string>
     <string name="details">Details</string>
     <string name="district">District</string>
     <string name="e_mail">E-mail</string>
+    <string name="e_mail_verification_required">E-mail verification required</string>
     <string name="error">Error</string>
     <string name="error_for_account">You must sign in to comment</string>
     <string name="error_location">Make sure the location is on!</string>
+    <string name="error_comment_not_updated">Error!!, comment could not be updated</string>
     <string name="gallery">Gallery</string>
     <string name="give_permission">Give permission</string>
     <string name="images">Images</string>

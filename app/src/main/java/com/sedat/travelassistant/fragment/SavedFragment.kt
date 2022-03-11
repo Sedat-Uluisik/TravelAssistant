@@ -2,6 +2,7 @@ package com.sedat.travelassistant.fragment
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.widget.addTextChangedListener
@@ -12,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.sedat.travelassistant.R
 import com.sedat.travelassistant.adapter.SavedPlacesAdapter
 import com.sedat.travelassistant.databinding.FragmentSavedBinding
@@ -35,6 +37,8 @@ class SavedFragment : Fragment() {
 
     @Inject
     lateinit var savedPlacesAdapter: SavedPlacesAdapter
+    @Inject
+    lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,18 +81,25 @@ class SavedFragment : Fragment() {
 
         viewModel.getPlaces()
         observe()
+
+        binding.syncBtn.setOnClickListener { //save locations to firebase db
+            if(auth.currentUser != null)
+                viewModel.saveLocationsToFirebase(auth.currentUser!!.uid)
+            else
+                Toast.makeText(requireContext(), "Buluta kaydetmek için giriş yapmanız gerekir", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun observe(){
-        viewModel.placeList.observe(viewLifecycleOwner, Observer {
+        viewModel.placeList.observe(viewLifecycleOwner) {
             it?.let { list ->
-                if(list.isNotEmpty())
+                if (list.isNotEmpty())
                     savedPlacesAdapter.placeList = list
                 else
                     savedPlacesAdapter.placeList = listOf()
                 savedPlacesAdapter.refreshData()
             }
-        })
+        }
 
         viewModel.imageList.observe(viewLifecycleOwner, Observer {
             savedPlacesAdapter.imageList.clear()

@@ -42,6 +42,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.sedat.travelassistant.R
 import com.sedat.travelassistant.adapter.SelectedRouteAdapter
 import com.sedat.travelassistant.converter.ConverterForImage
@@ -88,6 +89,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient //Bilinen son konumu almak için kullanıldı.
 
+    @Inject
+    lateinit var auth: FirebaseAuth
     @Inject
     lateinit var glide: RequestManager
     @Inject
@@ -858,16 +861,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
                                 locationListener
                         )
                     }
-
-                    //imleci  son bilinen konuma taşı.
-                    /*val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                    if (lastLocation != null) {
-                        val lastUserLocation = LatLng(lastLocation.latitude, lastLocation.longitude)
-                        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(lastUserLocation, viewModel.mapZoom.value!!)))
-                        viewModel.firstLocationTakenFromUser.value = lastLocation
-                        userLocation = LatLng(lastLocation.latitude, lastLocation.longitude)
-                        userLocationPoint = lastLocation
-                    }*/
 
                     fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                         location?.let { loc ->

@@ -32,6 +32,7 @@ import com.sedat.travelassistant.databinding.FragmentDetailsBinding
 import com.sedat.travelassistant.model.Properties
 import com.sedat.travelassistant.model.firebase.Comment
 import com.sedat.travelassistant.model.selectedroute.SelectedRoute
+import com.sedat.travelassistant.util.firebasereferences.References.users
 import com.sedat.travelassistant.viewmodel.DetailsFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.reflect.Method
@@ -42,7 +43,7 @@ class DetailsFragment @Inject constructor(
         private val imagesAdapter: ImagesAdapter,
         private val commentAdapter: CommentAdapter,
         private val glide: RequestManager,
-        private val ffirestore: FirebaseFirestore,
+        private val dbFirestore: FirebaseFirestore,
         private val auth: FirebaseAuth
 ) : Fragment() {
 
@@ -51,7 +52,6 @@ class DetailsFragment @Inject constructor(
 
     private lateinit var viewModel: DetailsFragmentViewModel
     private lateinit var oldCommentForUpdate: Comment
-    //private lateinit var auth: FirebaseAuth
 
     private var isUpdateComment: Boolean = false
 
@@ -142,7 +142,6 @@ class DetailsFragment @Inject constructor(
         }
 
         binding.includedCommentLayout.toCommentButton.setOnClickListener {
-            //val commentDate = DateFormat.format("dd/MM/yyyy", comment.getDate()!!)
             if(place != null){
                 if(isUpdateComment){ //update comment
 
@@ -156,11 +155,11 @@ class DetailsFragment @Inject constructor(
                         if(bool){
                             viewModel.updateRating(place!!.placeId, oldRating, binding.includedCommentLayout.ratingBarComment.rating)
                             clearCommentView()
-                            Toast.makeText(requireContext(), "yorum güncellendi", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), getString(R.string.comment_updated), Toast.LENGTH_SHORT).show()
                         }
                         else{
                             clearCommentView()
-                            Toast.makeText(requireContext(), "hata, yorum güncellenemedi", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), getString(R.string.error_comment_not_updated), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }else //post comment
@@ -175,7 +174,7 @@ class DetailsFragment @Inject constructor(
         observe()
     }
 
-    private fun bind(place: com.sedat.travelassistant.model.Properties) {
+    private fun bind(place: Properties) {
         binding.nameText.text = place.name
     }
 
@@ -283,7 +282,7 @@ class DetailsFragment @Inject constructor(
             val commentView = binding.includedCommentLayout
             if(commentView != null){
 
-                ffirestore.collection("Users").document(auth.uid.toString())  //get username for comment
+                dbFirestore.collection(users).document(auth.uid.toString())  //get username for comment
                     .get()
                     .addOnSuccessListener {
                         if(it != null){

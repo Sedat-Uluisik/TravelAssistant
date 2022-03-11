@@ -30,5 +30,5 @@ data class Properties(
     val state: String,
     val street: String,
     val suburb: String,
-    val town: String
+    val town: String,
 ): Serializable

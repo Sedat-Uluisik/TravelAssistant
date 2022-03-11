@@ -10,16 +10,16 @@ import java.io.Serializable
 data class SavedPlace(
         @PrimaryKey(autoGenerate = true)
         @ColumnInfo(name = "rowid")
-        val rowid: Int,
-        val name: String,
-        val city: String,
-        val district: String,
-        val address: String,
-        val state: String,
-        val street: String,
-        val suburb: String,
-        val lat: Double,
-        val lon: Double
+        var rowid: Int = 0,
+        var name: String = "",
+        var city: String = "",
+        var district: String = "",
+        var address: String = "",
+        var state: String = "",
+        var street: String = "",
+        var suburb: String = "",
+        var lat: Double = 0.0,
+        var lon: Double = 0.0
 ): Serializable
 
 //arama/search işlemi için kullanılacak.

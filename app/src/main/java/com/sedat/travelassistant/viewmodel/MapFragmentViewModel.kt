@@ -139,16 +139,16 @@ class MapFragmentViewModel @Inject constructor(
     fun savePlaceForRoom(properties: Properties){
         launch {
             val savedPlace = SavedPlace(
-                    0,
-                    if (properties.name.isNullOrEmpty()) "--" else properties.name,
-                    if (properties.city.isNullOrEmpty()) "--" else properties.city,
-                    if (properties.district.isNullOrEmpty()) "--" else properties.district,
-                    if (properties.formatted.isNullOrEmpty()) "--" else properties.formatted,
-                    if (properties.state.isNullOrEmpty()) "--" else properties.state,
-                    if (properties.street.isNullOrEmpty()) "--" else properties.street,
-                    if (properties.suburb.isNullOrEmpty()) "--" else properties.suburb,
-                    properties.lat,
-                    properties.lon,
+                0,
+                if (properties.name.isNullOrEmpty()) "--" else properties.name,
+                if (properties.city.isNullOrEmpty()) "--" else properties.city,
+                if (properties.district.isNullOrEmpty()) "--" else properties.district,
+                if (properties.formatted.isNullOrEmpty()) "--" else properties.formatted,
+                if (properties.state.isNullOrEmpty()) "--" else properties.state,
+                if (properties.street.isNullOrEmpty()) "--" else properties.street,
+                if (properties.suburb.isNullOrEmpty()) "--" else properties.suburb,
+                properties.lat,
+                properties.lon,
             )
             repository.savePlaceForRoom(savedPlace)
             Toast.makeText(application, application.getString(R.string.save_successful), Toast.LENGTH_SHORT).show()
