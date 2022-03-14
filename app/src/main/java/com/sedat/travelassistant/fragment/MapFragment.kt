@@ -214,9 +214,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
 
         /*glide.asBitmap().load("image_link").into(object : CustomTarget<Bitmap>(){
             override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-
-
-
             }
 
             override fun onLoadCleared(placeholder: Drawable?) {
@@ -346,7 +343,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
                                 } else { //önceki tarihlerde gezilmiş ise kırmızı
                                     2
                                 }
-                            //break
                         }
                     }
                 }
@@ -472,7 +468,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
                         }
                     }
                 }else
-                    Toast.makeText(requireContext(), "konum açık değil", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), getString(R.string.gps_not_on), Toast.LENGTH_LONG).show()
             }
 
             override fun onProviderEnabled(provider: String) {
@@ -683,7 +679,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
         alertDialog.setCancelable(true)
         alertDialog.setView(view.root)
 
-        //val dialog: AlertDialog = alertDialog.create()
         dialog = alertDialog.create()
         if(dialog != null){
             if (dialog!!.window != null)

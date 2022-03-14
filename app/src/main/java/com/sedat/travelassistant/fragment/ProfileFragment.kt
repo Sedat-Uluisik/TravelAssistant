@@ -25,6 +25,7 @@ import com.sedat.travelassistant.R
 import com.sedat.travelassistant.adapter.ViewPagerAdapter
 import com.sedat.travelassistant.databinding.FragmentProfileBinding
 import com.sedat.travelassistant.repo.PlaceRepositoryInterface
+import com.sedat.travelassistant.util.firebasereferences.References.users
 import com.sedat.travelassistant.viewmodel.ProfileFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -40,7 +41,6 @@ class ProfileFragment @Inject constructor(
     private var fragmentBinding: FragmentProfileBinding ?= null
     private val binding get() = fragmentBinding!!
 
-    //private lateinit var auth: FirebaseAuth
     private lateinit var viewModel: ProfileFragmentViewModel
 
     private var isUpdateUsername = false //güncelleme işlemi için kullanılıyor.
@@ -59,7 +59,6 @@ class ProfileFragment @Inject constructor(
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity()).get(ProfileFragmentViewModel::class.java)
-        //auth = Firebase.auth
 
         if(auth.currentUser == null){ //show login-register uı
             binding.profileDetailsLayout.visibility = View.GONE
@@ -113,7 +112,7 @@ class ProfileFragment @Inject constructor(
             isUpdateEmail = false
         }
 
-        binding.updateBtnUsername.setOnClickListener { viewBtn ->
+        binding.updateBtnUsername.setOnClickListener {
             if(auth.currentUser != null){
                 if(!isUpdateUsername){
                     binding.usernameProfile.isEnabled = true
@@ -126,7 +125,7 @@ class ProfileFragment @Inject constructor(
                     if(username.isNotEmpty())
                         updateUsername(username)
                     else
-                        Toast.makeText(requireContext(), "kullanıcı adı boş olamaz", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), getString(R.string.username_cannot_be_empty), Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -151,7 +150,7 @@ class ProfileFragment @Inject constructor(
                    if(password.isNotEmpty())
                        updatePassword(password)
                    else
-                       Toast.makeText(requireContext(), "şifrenizi giriniz", Toast.LENGTH_SHORT).show()
+                       Toast.makeText(requireContext(), getString(R.string.enter_your_password), Toast.LENGTH_SHORT).show()
                }
            }
         }
@@ -181,13 +180,13 @@ class ProfileFragment @Inject constructor(
                     binding.cancelPasswordBtn.visibility = View.GONE
                     isUpdatePassword = false
 
-                    Toast.makeText(requireContext(), "şifre değiştirildi", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.password_changed), Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
     private fun updateUsername(username: String){
-        val userRef = dbFirestore.collection("Users").document(auth.currentUser!!.uid)
+        val userRef = dbFirestore.collection(users).document(auth.currentUser!!.uid)
         userRef.get()
             .addOnSuccessListener { doc ->
                 if(doc.data != null){
@@ -228,7 +227,7 @@ class ProfileFragment @Inject constructor(
                                         }
                                     }
                                     //update user info
-                                    val userRef = dbFirestore.collection("Users").document(auth.currentUser!!.uid)
+                                    val userRef = dbFirestore.collection(users).document(auth.currentUser!!.uid)
 
                                     userRef.get()
                                         .addOnSuccessListener { doc ->

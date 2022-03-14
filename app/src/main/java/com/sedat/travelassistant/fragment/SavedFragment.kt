@@ -1,5 +1,7 @@
 package com.sedat.travelassistant.fragment
 
+import android.app.AlertDialog
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.sedat.travelassistant.R
 import com.sedat.travelassistant.adapter.SavedPlacesAdapter
+import com.sedat.travelassistant.databinding.AlertDialogSyncToCloudBinding
 import com.sedat.travelassistant.databinding.FragmentSavedBinding
 import com.sedat.travelassistant.model.room.SavedPlace
 import com.sedat.travelassistant.util.SaveImageToFile
@@ -84,9 +87,9 @@ class SavedFragment : Fragment() {
 
         binding.syncBtn.setOnClickListener { //save locations to firebase db
             if(auth.currentUser != null)
-                viewModel.saveLocationsToFirebase(auth.currentUser!!.uid)
+                showSyncOptions()
             else
-                Toast.makeText(requireContext(), "Buluta kaydetmek için giriş yapmanız gerekir", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Bulut işlemleri için giriş yapmanız gerekir", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -121,19 +124,18 @@ class SavedFragment : Fragment() {
 
             //Dosya içindeki tüm resimleri silmek için kullanılıyor.
             viewModel.getImages(selectedPlace.rowid)
-            viewModel.imagesPaths.observe(viewLifecycleOwner, {
+            viewModel.imagesPaths.observe(viewLifecycleOwner) {
                 it?.let { list ->
-                    if(list.isNotEmpty()){
+                    if (list.isNotEmpty()) {
                         list.forEach { image ->
                             SaveImageToFile().delete(requireContext(), image.image_path)
                         }
                     }
                 }
-            })
+            }
             viewModel.deleteAllImagesWithRootId(selectedPlace.rowid) //room dan tüm resimler silinir.
             viewModel.clearData()
         }
-
     }
 
     private fun showPopupMenu(savedPlace: SavedPlace, view: View){
@@ -153,7 +155,6 @@ class SavedFragment : Fragment() {
         }
 
         //popup menüdeki ikonların görünmesi için kullanıldı.
-
         try {
             val fields = popup.javaClass.declaredFields
             for (field in fields) {
@@ -174,6 +175,57 @@ class SavedFragment : Fragment() {
             e.printStackTrace()
         }finally {
             popup.show()
+        }
+    }
+
+    private fun showSyncOptions(){
+        val view = AlertDialogSyncToCloudBinding.inflate(LayoutInflater.from(requireContext()))
+        val alertDialog = AlertDialog.Builder(requireContext())
+        alertDialog.setCancelable(true)
+        alertDialog.setView(view.root)
+
+        val dialog: AlertDialog = alertDialog.create()
+        if(dialog.window != null)
+            dialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+        dialog.show()
+
+        var download = 0
+        view.radioGroupDownload.setOnCheckedChangeListener { radioGroup, id ->
+            when(id){
+                R.id.radio_different_download ->{
+                    download = 1
+                }
+                R.id.radio_delete_download ->{
+                    download = 2
+                }
+            }
+        }
+
+        view.cloudDownloadBtn.setOnClickListener {
+            when (download) {
+                1 -> viewModel.saveDifferentUserSavedLocations(auth.currentUser!!.uid)
+                2 -> viewModel.removeOldLocationsToRoomAndSaveNewLocationsFromFirebase(auth.currentUser!!.uid)
+                else -> println("bir seçim yapınız")
+            }
+        }
+
+        var upload = 0
+        view.radioGroupUpload.setOnCheckedChangeListener { radioGroup, id ->
+            when(id){
+                R.id.radio_different_upload ->{
+                    upload = 1
+                }
+                R.id.radio_delete_upload ->{
+                    upload = 2
+                }
+            }
+        }
+        view.cloudUploadBtn.setOnClickListener {
+            when (upload) {
+                1 -> viewModel.saveDifferentLocationsToFirebase(auth.currentUser!!.uid)
+                2 -> viewModel.saveLocationsToFirebaseAndDeleteOldLocations(auth.currentUser!!.uid)
+                else -> println("bir seçim yapınız")
+            }
         }
     }
 

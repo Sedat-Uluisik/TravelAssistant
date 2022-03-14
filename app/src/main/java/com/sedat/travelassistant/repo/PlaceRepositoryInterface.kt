@@ -50,5 +50,9 @@ interface PlaceRepositoryInterface {
     fun getUserInfo(userId: String, listener: (User) -> Unit)
     fun sendVerificationEmail(listener: (Boolean) -> Unit)
 
-    fun saveLocationsToFirebase(locationList: List<SavedPlace>, userId: String)
+    fun saveLocationsToFirebaseAndDeleteOldLocations(locationList: List<SavedPlace>, userId: String)
+    fun saveDifferentLocationsToFirebase(locationList: List<SavedPlace>, userId: String)
+    suspend fun removeOldLocationsToRoomAndSaveNewLocationsFromFirebase(locationList: List<SavedPlace>)
+    fun getUserSavedLocations(userId: String, listener: (List<SavedPlace>) -> Unit)
+    suspend fun saveDifferentUserSavedLocations(locationList: List<SavedPlace>)
 }

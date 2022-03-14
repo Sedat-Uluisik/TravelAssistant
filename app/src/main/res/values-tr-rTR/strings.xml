@@ -13,12 +13,18 @@
     <string name="categories">Kategoriler</string>
     <string name="city">Şehir</string>
     <string name="close">Kapat</string>
+    <string name="cloud_download">Buluttan indir</string>
+    <string name="cloud_upload">Buluta yükle</string>
     <string name="comment">Yorum yap</string>
     <string name="comment_sent">Yorum gönderildi</string>
     <string name="comment_updated">Yorum güncellendi</string>
     <string name="delete">Sil</string>
+    <string name="delete_old_locations">Telefondaki eski kayıtları sil</string>
+    <string name="delete_data_from_cloud">Buluttaki kayıtları sil</string>
     <string name="details">Detaylar</string>
+    <string name="download_different_data">Farklı kayıtları indir</string>
     <string name="district">Semt</string>
+    <string name="enter_your_password">Şifrenizi giriniz</string>
     <string name="e_mail">E-mail</string>
     <string name="e_mail_verification_required">E-posta doğrulaması gerekiyor</string>
     <string name="error">Hata</string>
@@ -27,6 +33,7 @@
     <string name="error_comment_not_updated">Hata!!, yorum güncellenemedi</string>
     <string name="gallery">Galeri</string>
     <string name="give_permission">İzin Ver</string>
+    <string name="gps_not_on">GPS açık değil</string>
     <string name="images">Resimler</string>
     <string name="internet_is_not_open">İnternet açık değil</string>
     <string name="location_not_found">Hata! Konum bulunamadı.</string>
@@ -50,6 +57,7 @@
     <string name="only_saved_locations">Sadece kayıtlı konumları göster</string>
     <string name="or">ya da</string>
     <string name="password">Şifre</string>
+    <string name="password_changed">Şifre değiştirildi</string>
     <string name="permission_needed">İzin Gerekli</string>
     <string name="permission_needed_for_location">Konum izni gerekli</string>
     <string name="please_select_location">Lütfen konum seçin</string>
@@ -72,7 +80,9 @@
     <string name="traffic">Trafik</string>
     <string name="title_activity_maps">Seyahat Asistanı</string>
     <string name="update">Güncelle</string>
+    <string name="upload_different_data">Farklı kayıtları yükle</string>
     <string name="username">Kullanıcı adı</string>
+    <string name="username_cannot_be_empty">Kullanıcı adı boş olamaz</string>
     <string name="visited_in_the_past">Geçmişte ziyaret edildi</string>
     <string name="visited_today">Bugün ziyaret edildi</string>
     <string name="you_havent_added_a_picture">Henüz resim eklememişsin</string>

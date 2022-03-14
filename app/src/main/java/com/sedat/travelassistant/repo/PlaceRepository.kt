@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.LifecycleCoroutineScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
@@ -34,6 +35,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.Single
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
 
@@ -361,8 +363,6 @@ class PlaceRepository @Inject constructor(
                     ref2.collection("LikeOrDislikeNumber")
                         .addSnapshotListener { value, error ->
 
-                            println("yorum silme snapshot u")
-
                             if(value != null && value.documents.isNotEmpty()){
                                 for (i in value.documents){  //yoruma ait beğenen ve beğenmeyen kullanıcılar koleksiyonu silinir.
                                     i.reference.delete()
@@ -483,8 +483,71 @@ class PlaceRepository @Inject constructor(
         }
     }
 
-    override fun saveLocationsToFirebase(locationList: List<SavedPlace>, userId: String) {
-        val savedPlaceRef = dbFirestore
+    override fun saveLocationsToFirebaseAndDeleteOldLocations(locationList: List<SavedPlace>, userId: String) {
+        /*
+        firebase deki kayıtları silip telefondaki kayıtları yükler.
+         */
+
+        val savedLocationsRef = dbFirestore
+            .collection(userSavedLocations)
+            .document(userId)
+            .collection(locations)
+
+        deleteOldLocationsToFirebase(savedLocationsRef){
+            if(it || !it){
+                for (i in locationList){
+                    val map = HashMap<String, Any>()
+                    map["rowid"] = i.rowid
+                    map["name"] = i.name
+                    map["city"] = i.city
+                    map["district"] = i.district
+                    map["address"] = i.address
+                    map["state"] = i.state
+                    map["street"] = i.street
+                    map["suburb"] = i.suburb
+                    map["lat"] = i.lat
+                    map["lon"] = i.lon
+
+                    savedLocationsRef.document("${i.lat}_${i.lon}").set(map)
+                }
+                    Toast.makeText(context, "buluta yükleme başarılı", Toast.LENGTH_LONG).show()
+
+            }
+        }
+
+
+    }
+
+    private fun deleteOldLocationsToFirebase(savedLocationsRef: CollectionReference, listener: (Boolean) -> Unit){
+        /*
+        telefondaki kayıtları firebase db ye kaydetmek için eski kayıtları siler.
+         */
+        savedLocationsRef.get().addOnCompleteListener {
+            if(it.isSuccessful){
+                if(it.result.documents.isNotEmpty()){
+                    val size = it.result.documents.size
+                    var j = 0
+                    for (i in it.result.documents){
+                        j++
+                        i.reference.delete()
+                        if(j == size)
+                            listener(true)
+                    }
+                }else
+                    listener(false)
+            }else
+                listener(false)
+        }.addOnFailureListener {
+            listener(false)
+        }.addOnCanceledListener {
+            listener(false)
+        }
+    }
+
+    override fun saveDifferentLocationsToFirebase(locationList: List<SavedPlace>, userId: String){
+        //telefondaki kayıtlardan firebase de olmayanları firebase ye kaydeder.
+
+        val savedLocationsRef = dbFirestore
             .collection(userSavedLocations)
             .document(userId)
             .collection(locations)
@@ -502,9 +565,47 @@ class PlaceRepository @Inject constructor(
             map["lat"] = i.lat
             map["lon"] = i.lon
 
-            savedPlaceRef.document("${i.lat}_${i.lon}").set(map)
+            savedLocationsRef.document("${i.lat}_${i.lon}").set(map)
         }
-            Toast.makeText(context, "buluta yükleme başarılı", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "buluta yükleme başarılı", Toast.LENGTH_LONG).show()
+    }
+
+    override fun getUserSavedLocations(userId: String, listener: (List<SavedPlace>) -> Unit) { //kullanıcının firebase ye yüklediği kayıtları getirir.
+        val locationsRef = dbFirestore
+            .collection(userSavedLocations)
+            .document(userId)
+            .collection(locations)
+
+        locationsRef.get().addOnCompleteListener { task ->
+            if(task.isSuccessful){
+                if(!task.result.isEmpty && task.result.documents.isNotEmpty()){
+                    val locations = task.result.toObjects<SavedPlace>()
+                    if(locations.isNotEmpty())
+                        listener(locations)
+                }
+            }
+        }
+    }
+
+    override suspend fun removeOldLocationsToRoomAndSaveNewLocationsFromFirebase(locationList: List<SavedPlace>) {
+        //telefondaki var olan kayıtları silip firebase den indirilen kayıtları kaydeder.
+        if(locationList.isNotEmpty()){
+            dao.deleteAllSavedLocations()
+
+            dao.saveLocationListToRoom(*locationList.toTypedArray())
+
+            Toast.makeText(context, "Mevcut kayıtlar silindi", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Bulutaki kayıtlar indirildi", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override suspend fun saveDifferentUserSavedLocations(locationList: List<SavedPlace>) {
+        //telefonda olmayan firebase kayıtlarını kaydeder.
+        if(locationList.isNotEmpty()){
+            dao.saveLocationListToRoom(*locationList.toTypedArray())
+
+            Toast.makeText(context, "Farklı kayıtlar indirildi", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun sendComment(comment: Comment, docRef: DocumentReference, callBack: (Boolean) -> Unit){

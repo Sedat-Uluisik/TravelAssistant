@@ -21,6 +21,12 @@ interface Dao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun savePlaceForRoom(place: SavedPlace)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveLocationListToRoom(vararg place: SavedPlace)
+
+    @Query("DELETE FROM saved_places")
+    suspend fun deleteAllSavedLocations()
+
     @Query("SELECT * FROM saved_places WHERE lat = :lat AND lon = :lon")
     suspend fun getPlaceWithLatLonFromRoom(lat: Double, lon: Double): SavedPlace
 

@@ -12,12 +12,18 @@
     <string name="categories">Categories</string>
     <string name="city">City</string>
     <string name="close">Close</string>
+    <string name="cloud_download">Cloud download</string>
+    <string name="cloud_upload">Cloud upload</string>
     <string name="comment">To comment</string>
     <string name="comment_sent">Comment sent</string>
     <string name="comment_updated">Comment updated</string>
     <string name="delete">Delete</string>
+    <string name="delete_old_locations">Remove the old places on the phone</string>
+    <string name="delete_data_from_cloud">Delete data from cloud</string>
     <string name="details">Details</string>
+    <string name="download_different_data">Download different data</string>
     <string name="district">District</string>
+    <string name="enter_your_password">Enter your password</string>
     <string name="e_mail">E-mail</string>
     <string name="e_mail_verification_required">E-mail verification required</string>
     <string name="error">Error</string>
@@ -26,6 +32,7 @@
     <string name="error_comment_not_updated">Error!!, comment could not be updated</string>
     <string name="gallery">Gallery</string>
     <string name="give_permission">Give permission</string>
+    <string name="gps_not_on">GPS not on</string>
     <string name="images">Images</string>
     <string name="internet_is_not_open">Internet is not open</string>
     <string name="location_not_found">Error! Location not found.</string>
@@ -49,6 +56,7 @@
     <string name="only_saved_locations">Show only saved locations</string>
     <string name="or">or</string>
     <string name="password">Password</string>
+    <string name="password_changed">Password changed</string>
     <string name="permission_needed">Permission needed</string>
     <string name="permission_needed_for_location">Permission needed for location</string>
     <string name="please_select_location">Please select location</string>
@@ -71,7 +79,9 @@
     <string name="traffic">Traffic</string>
     <string name="title_activity_maps">Travel Assistant</string>
     <string name="update">Update</string>
+    <string name="upload_different_data">Upload different data</string>
     <string name="username">username</string>
+    <string name="username_cannot_be_empty">Username cannot be empty</string>
     <string name="visited_in_the_past">Visited in the past</string>
     <string name="visited_today">Visited today</string>
     <string name="you_havent_added_a_picture">You havent added a picture yet</string>

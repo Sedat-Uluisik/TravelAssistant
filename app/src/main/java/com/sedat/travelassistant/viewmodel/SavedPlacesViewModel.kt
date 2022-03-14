@@ -143,10 +143,41 @@ class SavedPlacesViewModel @Inject constructor(
         }
     }
 
-    fun saveLocationsToFirebase(userId: String){
+    fun saveLocationsToFirebaseAndDeleteOldLocations(userId: String){
         if(placeList.value != null){
             if (placeList.value!!.isNotEmpty()){
-                repository.saveLocationsToFirebase(placeList.value!!, userId)
+                repository.saveLocationsToFirebaseAndDeleteOldLocations(placeList.value!!, userId)
+            }
+        }
+    }
+
+    fun saveDifferentLocationsToFirebase(userId: String){
+        if(placeList.value != null){
+            if(placeList.value!!.isNotEmpty())
+                repository.saveDifferentLocationsToFirebase(placeList.value!!, userId)
+        }
+    }
+
+    fun removeOldLocationsToRoomAndSaveNewLocationsFromFirebase(userId: String){
+        if(userId.isNotEmpty()){
+            repository.getUserSavedLocations(userId) {
+                launch {
+                    repository.removeOldLocationsToRoomAndSaveNewLocationsFromFirebase(it)
+
+                    getPlaces()
+                }
+            }
+        }
+    }
+
+    fun saveDifferentUserSavedLocations(userId: String){
+        if(userId.isNotEmpty()){
+            repository.getUserSavedLocations(userId){
+                launch {
+                    repository.saveDifferentUserSavedLocations(it)
+
+                    getPlaces()
+                }
             }
         }
     }

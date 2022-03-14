@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/button_back_3">
 
    <LinearLayout
        android:layout_width="match_parent"
@@ -12,20 +13,36 @@
        android:padding="5dp"
        android:layout_margin="5dp">
 
-       <RadioButton
+       <RadioGroup
+           android:id="@+id/radio_group_download"
            android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:text="telefondaki eski verileri sil"/>
+           android:layout_height="wrap_content">
 
-       <RadioButton
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:text="farklı verileri indir"/>
+           <RadioButton
+               android:id="@+id/radio_delete_download"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/delete_old_locations" />
+
+           <RadioButton
+               android:id="@+id/radio_different_download"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/download_different_data"/>
+
+       </RadioGroup>
 
        <Button
+           android:id="@+id/cloud_download_btn"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:text="load from cloud"/>
+           android:text="@string/cloud_download"
+           android:textAllCaps="false"
+           android:textStyle="bold"
+           android:textColor="@android:color/white"
+           android:padding="5dp"
+           android:drawableStart="@drawable/cloud_download_24"
+           android:background="@drawable/custom_alert_background"/>
 
    </LinearLayout>
 
@@ -37,20 +54,36 @@
         android:padding="5dp"
         android:layout_margin="5dp">
 
-        <RadioButton
+        <RadioGroup
+            android:id="@+id/radio_group_upload"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="buluttaki verileri sil"/>
+            android:layout_height="wrap_content">
 
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="farklı verileri kaydet"/>
+            <RadioButton
+                android:id="@+id/radio_delete_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delete_data_from_cloud"/>
+
+            <RadioButton
+                android:id="@+id/radio_different_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/upload_different_data"/>
+
+        </RadioGroup>
 
         <Button
+            android:id="@+id/cloud_upload_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="load to cloud"/>
+            android:text="@string/cloud_upload"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:padding="5dp"
+            android:drawableStart="@drawable/cloud_upload_24"
+            android:background="@drawable/custom_alert_background"/>
 
     </LinearLayout>
 
