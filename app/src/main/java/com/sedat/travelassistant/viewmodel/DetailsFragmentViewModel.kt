@@ -97,7 +97,7 @@ class DetailsFragmentViewModel @Inject constructor(
                 ratingValue.value = it / list.size
             }
         }
-        else if(list.isEmpty() && error.isNotEmpty()){
+        else{
             comments.value = list
             ratingValue.value = 0.0f
         }

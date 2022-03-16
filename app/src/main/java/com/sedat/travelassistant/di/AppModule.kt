@@ -8,6 +8,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import com.sedat.travelassistant.R
 import com.sedat.travelassistant.api.PlacesApi
 import com.sedat.travelassistant.repo.PlaceRepository
@@ -61,8 +63,9 @@ object AppModule {
         @ForRoute placesApiForRoute: PlacesApi,
         dbFirestore: FirebaseFirestore,
         @ApplicationContext context: Context,
-        auth: FirebaseAuth
-    ) = PlaceRepository(placesApi, placesApiForRoute, dbFirestore, auth, context) as PlaceRepositoryInterface
+        auth: FirebaseAuth,
+        storage: FirebaseStorage
+    ) = PlaceRepository(placesApi, placesApiForRoute, dbFirestore, auth, storage, context) as PlaceRepositoryInterface
 
     @Singleton
     @Provides
@@ -83,6 +86,10 @@ object AppModule {
     @Singleton
     @Provides
     fun injectFirebaseAuth(): FirebaseAuth = Firebase.auth
+
+    @Singleton
+    @Provides
+    fun injectFirebaseStorage(): FirebaseStorage = Firebase.storage
 }
 
 //iki farklı base_url olduğu için kullanım yerine göre uygun retrofiti inject etmek için kullanıldı.

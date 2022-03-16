@@ -45,6 +45,9 @@ interface Dao {
     @Query("SELECT * FROM place_images_paths WHERE root_id =:root_id")
     suspend fun getSavedPlaceImages(root_id: Int): List<ImagePath>
 
+    @Query("SELECT * FROM place_images_paths ")
+    suspend fun getAllSavedPlaceImages(): List<ImagePath>
+
     @Query("SELECT * FROM place_images_paths WHERE root_id IN (:root_ids)")
     suspend fun getOneImageFromSavedPlaces(root_ids: List<Int>): List<ImagePath>
 

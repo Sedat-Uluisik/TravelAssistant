@@ -30,7 +30,7 @@ class SaveImageToFile() {
             println(e.message)
         }
 
-        return Uri.parse(file.absolutePath)
+        return Uri.parse(file.path)
     }
 
     fun delete(context: Context, uri: String){

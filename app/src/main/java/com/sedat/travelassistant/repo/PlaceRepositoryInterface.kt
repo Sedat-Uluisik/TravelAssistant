@@ -34,6 +34,7 @@ interface PlaceRepositoryInterface {
     suspend fun updatePlaceFromRoom(savedPlace: SavedPlace)
     suspend fun saveImageForRoom(imagePath: ImagePath)
     suspend fun getSavedPlaceImages(root_id: Int): List<ImagePath>
+    suspend fun getAllSavedPlaceImages(callBack: (List<ImagePath>) -> Unit)
     suspend fun getOneImageFromSavedPlaces(root_ids: List<Int>): List<ImagePath>
     suspend fun deleteImagesFromRoom(id: Int, root_id: Int)
     suspend fun deleteAllImagesWithRootId(root_id: Int)
@@ -50,7 +51,7 @@ interface PlaceRepositoryInterface {
     fun getUserInfo(userId: String, listener: (User) -> Unit)
     fun sendVerificationEmail(listener: (Boolean) -> Unit)
 
-    fun saveLocationsToFirebaseAndDeleteOldLocations(locationList: List<SavedPlace>, userId: String)
+    fun saveLocationsToFirebaseAndDeleteOldLocations(locationList: List<SavedPlace>, imageList: List<ImagePath>, userId: String)
     fun saveDifferentLocationsToFirebase(locationList: List<SavedPlace>, userId: String)
     suspend fun removeOldLocationsToRoomAndSaveNewLocationsFromFirebase(locationList: List<SavedPlace>)
     fun getUserSavedLocations(userId: String, listener: (List<SavedPlace>) -> Unit)

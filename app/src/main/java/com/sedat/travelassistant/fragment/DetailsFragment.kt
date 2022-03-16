@@ -203,10 +203,12 @@ class DetailsFragment @Inject constructor(
 
             if(it.isNotEmpty()){
                 binding.includedCommentLayout.commentNotFound.visibility = View.GONE
+                binding.includedCommentLayout.recyclerViewComment.visibility = View.VISIBLE
                 commentAdapter.commentList = it
             }
             else{
                 commentAdapter.commentList = listOf()
+                binding.includedCommentLayout.recyclerViewComment.visibility = View.GONE
                 binding.includedCommentLayout.commentNotFound.visibility = View.VISIBLE
             }
         }

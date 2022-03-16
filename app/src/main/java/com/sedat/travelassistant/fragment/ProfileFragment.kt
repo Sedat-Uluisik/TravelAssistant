@@ -197,6 +197,7 @@ class ProfileFragment @Inject constructor(
                         binding.usernameProfile.alpha = 0.9f
                         isUpdateUsername = false
                         binding.updateBtnUsername.colorFilter = null
+                        binding.cancelUsernameBtn.visibility = View.GONE
                         Toast.makeText(requireContext(), "kullanıcı adı güncellendi", Toast.LENGTH_SHORT).show()
                     }
                 }

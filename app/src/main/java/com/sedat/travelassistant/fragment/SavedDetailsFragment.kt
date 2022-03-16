@@ -1,6 +1,7 @@
 package com.sedat.travelassistant.fragment
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.ColorDrawable
@@ -41,6 +42,7 @@ import com.sedat.travelassistant.model.selectedroute.SelectedRoute
 import com.sedat.travelassistant.util.SaveImageToFile
 import com.sedat.travelassistant.viewmodel.SavedPlacesViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -48,7 +50,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SavedDetailsFragment @Inject constructor(
-        private val glide: RequestManager
+        private val glide: RequestManager,
+        private val myContext: Context
 ) : Fragment(), SavedDetailsFragmentClickListener {
 
     private lateinit var databinding: FragmentSavedDetailsBinding
@@ -300,10 +303,11 @@ class SavedDetailsFragment @Inject constructor(
 
                 photoFile?.also {
                     val photoUri: Uri = FileProvider.getUriForFile(
-                            requireActivity(),
+                            myContext,
                             "com.sedat.travelassistant.fileprovider",
                             it
                     )
+
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
                     pickCamera = true
                     activityResultLauncher.launch(takePictureIntent)
@@ -378,8 +382,14 @@ class SavedDetailsFragment @Inject constructor(
                         }
                     }else if(currentPhotoPath.isNotEmpty() && pickCamera){
 
-                        val file = File(currentPhotoPath)
-                        viewModel.imagesForSave.add(ImagePath(0, 0, Uri.fromFile(file).toString()))
+                        //val file = File(currentPhotoPath)
+                        //viewModel.imagesForSave.add(ImagePath(0, 0, Uri.fromFile(file).toString())) firebase ye yüklerken uri nedeniyle hata veriyor
+                        viewModel.imagesForSave.add(ImagePath(0, 0, currentPhotoPath))
+
+                        /*println(currentPhotoPath)
+                        println(file)
+                        println(Uri.fromFile(file))
+                        println(Uri.fromFile(file).toString())*/
 
                         if(viewModel.imagesForSave.size > 0){
                             savedImagesAdapter.imageList = viewModel.imagesForSave
@@ -396,8 +406,8 @@ class SavedDetailsFragment @Inject constructor(
 
                     if(viewModel.imagesForSave.size > 0){
 
-                        for (i in viewModel.imagesForSave)
-                            println(i.image_path)
+                        //for (i in viewModel.imagesForSave)
+                            //println(i.image_path)
 
                         savedImagesAdapter.imageList = viewModel.imagesForSave
                         savedImagesAdapter.notifyDataSetChanged()

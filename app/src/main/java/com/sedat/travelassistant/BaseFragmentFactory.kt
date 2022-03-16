@@ -1,5 +1,6 @@
 package com.sedat.travelassistant
 
+import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import com.bumptech.glide.RequestManager
@@ -12,6 +13,7 @@ import com.sedat.travelassistant.adapter.ViewPagerAdapter
 import com.sedat.travelassistant.fragment.*
 import com.sedat.travelassistant.repo.PlaceRepositoryInterface
 import com.sedat.travelassistant.util.SaveImageToFile
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class BaseFragmentFactory @Inject constructor(
@@ -20,7 +22,8 @@ class BaseFragmentFactory @Inject constructor(
     private val commentAdapter: CommentAdapter,
     private val dbFirestore: FirebaseFirestore,
     private val auth: FirebaseAuth,
-    private val repository: PlaceRepositoryInterface
+    private val repository: PlaceRepositoryInterface,
+    @ApplicationContext private val myContext: Context
 ): FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         return when(className){
@@ -28,7 +31,7 @@ class BaseFragmentFactory @Inject constructor(
             SavedFragment::class.java.name -> SavedFragment()
             CategoriesFragment::class.java.name -> CategoriesFragment()
             DetailsFragment::class.java.name -> DetailsFragment(imagesAdapter, commentAdapter, glide, dbFirestore, auth)
-            SavedDetailsFragment::class.java.name -> SavedDetailsFragment(glide)
+            SavedDetailsFragment::class.java.name -> SavedDetailsFragment(glide, myContext)
             ProfileFragment::class.java.name -> ProfileFragment(auth, dbFirestore, repository)
             RegisterFragment::class.java.name -> RegisterFragment()
             LoginFragment::class.java.name -> LoginFragment()

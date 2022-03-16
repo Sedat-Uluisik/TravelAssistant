@@ -146,7 +146,11 @@ class SavedPlacesViewModel @Inject constructor(
     fun saveLocationsToFirebaseAndDeleteOldLocations(userId: String){
         if(placeList.value != null){
             if (placeList.value!!.isNotEmpty()){
-                repository.saveLocationsToFirebaseAndDeleteOldLocations(placeList.value!!, userId)
+                launch {
+                    repository.getAllSavedPlaceImages {
+                        repository.saveLocationsToFirebaseAndDeleteOldLocations(placeList.value!!, it, userId)
+                    }
+                }
             }
         }
     }

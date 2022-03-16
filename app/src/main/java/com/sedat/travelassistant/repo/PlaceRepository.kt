@@ -2,6 +2,7 @@ package com.sedat.travelassistant.repo
 
 import android.app.Activity
 import android.content.Context
+import android.net.Uri
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -9,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import com.google.firebase.storage.FirebaseStorage
 import com.sedat.travelassistant.R
 import com.sedat.travelassistant.api.PlacesApi
 import com.sedat.travelassistant.model.Place
@@ -23,6 +25,7 @@ import com.sedat.travelassistant.model.room.ImagePath
 import com.sedat.travelassistant.model.room.SavedPlace
 import com.sedat.travelassistant.model.route.Route
 import com.sedat.travelassistant.room.TravelDatabase
+import com.sedat.travelassistant.util.SaveImageToFile
 import com.sedat.travelassistant.util.firebasereferences.References
 import com.sedat.travelassistant.util.firebasereferences.References.comments
 import com.sedat.travelassistant.util.firebasereferences.References.dislikeNumber
@@ -33,9 +36,12 @@ import com.sedat.travelassistant.util.firebasereferences.References.locations
 import com.sedat.travelassistant.util.firebasereferences.References.userSavedLocations
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.Single
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileInputStream
 import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
 
@@ -44,6 +50,7 @@ class PlaceRepository @Inject constructor(
         private val placesApiForRoute: PlacesApi,
         private val dbFirestore: FirebaseFirestore,
         private val auth: FirebaseAuth,
+        private val storage: FirebaseStorage,
         @ApplicationContext private val context: Context
 ): PlaceRepositoryInterface {
 
@@ -106,6 +113,12 @@ class PlaceRepository @Inject constructor(
         return dao.getSavedPlaceImages(root_id)
     }
 
+    override suspend fun getAllSavedPlaceImages(
+        callBack: (List<ImagePath>) -> Unit
+    ) {
+        callBack(dao.getAllSavedPlaceImages())
+    }
+
     override suspend fun getOneImageFromSavedPlaces(root_ids: List<Int>): List<ImagePath> {
         return dao.getOneImageFromSavedPlaces(root_ids)
     }
@@ -138,6 +151,7 @@ class PlaceRepository @Inject constructor(
             }
             .addOnFailureListener {
                 Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+                listener(listOf(), "error")
             }
     }
 
@@ -397,22 +411,30 @@ class PlaceRepository @Inject constructor(
 
                         newRef.orderBy("date", Query.Direction.DESCENDING)
                             .addSnapshotListener { snapshot, error ->
-
                                 if(error != null){
+
+                                    println("777777")
+
                                     listener(listOf(),error.message.toString())
                                     return@addSnapshotListener
                                 }
-
                                 if(snapshot != null){
+
                                     val data = snapshot.toObjects<Comment>()
 
-                                    if(data.isNotEmpty()){
+                                    if(data.isNotEmpty())
                                         listener(data, "")
-                                    }
-                                }
+                                    else
+                                        listener(listOf(), "error")
+                                }else
+                                    listener(listOf(), "error")
                             }
                     }
                 }
+            }.addOnCanceledListener {
+                listener(listOf(), "error")
+            }.addOnFailureListener {
+                listener(listOf(),"error")
             }
     }
 
@@ -483,7 +505,7 @@ class PlaceRepository @Inject constructor(
         }
     }
 
-    override fun saveLocationsToFirebaseAndDeleteOldLocations(locationList: List<SavedPlace>, userId: String) {
+    override fun saveLocationsToFirebaseAndDeleteOldLocations(locationList: List<SavedPlace>, imageList: List<ImagePath>, userId: String) {
         /*
         firebase deki kayıtları silip telefondaki kayıtları yükler.
          */
@@ -509,13 +531,48 @@ class PlaceRepository @Inject constructor(
                     map["lon"] = i.lon
 
                     savedLocationsRef.document("${i.lat}_${i.lon}").set(map)
+
+                    if(imageList.isNotEmpty()){
+                        val list = imageList.filter { imagePath ->
+                            imagePath.root_id == i.rowid
+                        }
+
+                        println("--" + list.map {
+                            it.image_path
+                        })
+
+                        saveLocationImagesToFirebase(list, userId, "${i.lat}_${i.lon}"){ downloadUrl ->
+                            println("++" + downloadUrl)
+                        }
+                    }
                 }
                     Toast.makeText(context, "buluta yükleme başarılı", Toast.LENGTH_LONG).show()
 
             }
         }
+    }
 
+    private fun saveLocationImagesToFirebase(imageList: List<ImagePath>, userId: String, latLong: String, callBack: (String) -> Unit){
 
+        println("???????????")
+
+        for (i in imageList){
+            val imageId = SaveImageToFile().randomUid()
+            val stream = FileInputStream(File(i.image_path))
+            val imageRef = storage.reference.child("TravelGuide/$userId/$latLong/images/$imageId.jpg")
+            imageRef.putStream(stream)
+                .continueWithTask { task->
+                    if(!task.isSuccessful){
+                        task.exception?.let {
+                            throw it
+                        }
+                    }
+                    imageRef.downloadUrl
+                }.addOnCompleteListener { task->
+                    if(task.isSuccessful)
+                        callBack(task.result.toString())
+                }
+        }
     }
 
     private fun deleteOldLocationsToFirebase(savedLocationsRef: CollectionReference, listener: (Boolean) -> Unit){
