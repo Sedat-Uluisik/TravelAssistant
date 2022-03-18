@@ -29,6 +29,7 @@ import com.sedat.travelassistant.util.SaveImageToFile
 import com.sedat.travelassistant.util.firebasereferences.References
 import com.sedat.travelassistant.util.firebasereferences.References.comments
 import com.sedat.travelassistant.util.firebasereferences.References.dislikeNumber
+import com.sedat.travelassistant.util.firebasereferences.References.images
 import com.sedat.travelassistant.util.firebasereferences.References.likeNumber
 import com.sedat.travelassistant.util.firebasereferences.References.likeOrDislike
 import com.sedat.travelassistant.util.firebasereferences.References.likeOrDislikeNumber
@@ -221,22 +222,6 @@ class PlaceRepository @Inject constructor(
                                     ))
                                 }
                             }
-
-
-                            /*commentRef.addSnapshotListener { value, error ->
-                                if(value != null && error == null){
-                                    var likeNumber = value.get(likeNumber).toString().toInt()
-                                    var dislikeNumber = value.get(dislikeNumber).toString().toInt()
-
-                                    likeNumber++
-                                    dislikeNumber--
-                                    commentRef.update(mapOf(
-                                        References.likeNumber to likeNumber,
-                                        References.dislikeNumber to dislikeNumber
-                                    ))
-                                }
-                            }*/
-
                         }else{ //decrement like number and increment dislike number
                             likeDislikeRef.update(mapOf(
                                 References.likeOrDislike to false
@@ -413,8 +398,6 @@ class PlaceRepository @Inject constructor(
                             .addSnapshotListener { snapshot, error ->
                                 if(error != null){
 
-                                    println("777777")
-
                                     listener(listOf(),error.message.toString())
                                     return@addSnapshotListener
                                 }
@@ -510,13 +493,18 @@ class PlaceRepository @Inject constructor(
         firebase deki kayıtları silip telefondaki kayıtları yükler.
          */
 
+        println("11111111111111111111111")
+
         val savedLocationsRef = dbFirestore
             .collection(userSavedLocations)
             .document(userId)
             .collection(locations)
 
         deleteOldLocationsToFirebase(savedLocationsRef){
-            if(it || !it){
+
+            println("33333333" + it)
+
+            if(it){
                 for (i in locationList){
                     val map = HashMap<String, Any>()
                     map["rowid"] = i.rowid
@@ -530,36 +518,52 @@ class PlaceRepository @Inject constructor(
                     map["lat"] = i.lat
                     map["lon"] = i.lon
 
-                    savedLocationsRef.document("${i.lat}_${i.lon}").set(map)
+                    val imageUrlRef = savedLocationsRef.document("${i.lat}_${i.lon}")
+                    imageUrlRef.set(map)
 
+                    //kaydedilen resmin url si alınıp firestore da ilgili lokasyon altına kaydedilir.
                     if(imageList.isNotEmpty()){
                         val list = imageList.filter { imagePath ->
                             imagePath.root_id == i.rowid
                         }
 
-                        println("--" + list.map {
-                            it.image_path
-                        })
+                        deleteAllImagesToStorage("${i.lat}_${i.lon}", userId, list){ bool-> //lokasyona ait resimler storage dan silinir.
 
-                        saveLocationImagesToFirebase(list, userId, "${i.lat}_${i.lon}"){ downloadUrl ->
-                            println("++" + downloadUrl)
+                            println("55555" + bool)
+
+                            if(bool){
+                                saveLocationImagesToFirebase(list, userId, "${i.lat}_${i.lon}"){ downloadUrl, imageStorageRef, imageId -> //lokasyona ait resimler tekrar storage a yüklenir
+
+                                    println(downloadUrl)
+
+                                    imageUrlRef.collection(images).document(imageId)
+                                        .set(mapOf(
+                                            "imageStorageUrl" to downloadUrl,
+                                            "imageStorageRef" to imageStorageRef,
+                                            "imageId" to imageId
+                                        ))
+                                }
+                            }
                         }
                     }
                 }
                     Toast.makeText(context, "buluta yükleme başarılı", Toast.LENGTH_LONG).show()
-
-            }
+            }else
+                Toast.makeText(context, "buluta yükleme başarısız", Toast.LENGTH_LONG).show()
         }
     }
 
-    private fun saveLocationImagesToFirebase(imageList: List<ImagePath>, userId: String, latLong: String, callBack: (String) -> Unit){
+    private fun saveLocationImagesToFirebase(imageList: List<ImagePath>, userId: String, latLong: String, callBack: (String,String, String) -> Unit){
 
-        println("???????????")
+        println(imageList)
 
         for (i in imageList){
-            val imageId = SaveImageToFile().randomUid()
             val stream = FileInputStream(File(i.image_path))
-            val imageRef = storage.reference.child("TravelGuide/$userId/$latLong/images/$imageId.jpg")
+
+            val file = Uri.fromFile(File(i.image_path))
+            val imageId = file.lastPathSegment
+
+            val imageRef = storage.reference.child("TravelGuide/$userId/$latLong/$imageId")
             imageRef.putStream(stream)
                 .continueWithTask { task->
                     if(!task.isSuccessful){
@@ -570,7 +574,7 @@ class PlaceRepository @Inject constructor(
                     imageRef.downloadUrl
                 }.addOnCompleteListener { task->
                     if(task.isSuccessful)
-                        callBack(task.result.toString())
+                        callBack(task.result.toString(), imageRef.path, imageId.toString())
                 }
         }
     }
@@ -579,19 +583,37 @@ class PlaceRepository @Inject constructor(
         /*
         telefondaki kayıtları firebase db ye kaydetmek için eski kayıtları siler.
          */
+
+        println("222222222222222")
+
         savedLocationsRef.get().addOnCompleteListener {
             if(it.isSuccessful){
+
+                println("######")
+
                 if(it.result.documents.isNotEmpty()){
+
+                    println("$$$$$$$$$")
+
                     val size = it.result.documents.size
                     var j = 0
                     for (i in it.result.documents){
-                        j++
-                        i.reference.delete()
-                        if(j == size)
-                            listener(true)
+
+                        val ref = savedLocationsRef.document(i.id).collection(images)
+                        deleteAllImageReferenceAndImagesToFirebase(ref){ bool-> //önce resim referansları silinir.
+
+                            println("777777777777" + bool)
+
+                            if(bool || !bool){
+                                j++
+                                i.reference.delete() //daha sonra bir üst coleksiyon/doküman a ait referans silinir.
+                                if(j == size)
+                                    listener(true)
+                            }
+                        }
                     }
                 }else
-                    listener(false)
+                    listener(true)
             }else
                 listener(false)
         }.addOnFailureListener {
@@ -599,6 +621,61 @@ class PlaceRepository @Inject constructor(
         }.addOnCanceledListener {
             listener(false)
         }
+    }
+
+    private fun deleteAllImageReferenceAndImagesToFirebase(collectionReference: CollectionReference, callBack: (Boolean) -> Unit){
+
+        println("5555555555555555")
+
+        collectionReference.get().addOnCompleteListener { task-> //lokasyona ait resimlerin referansları silinir.
+            if(task.isSuccessful){
+                if(task.result.documents.isNotEmpty()){
+                    val size = task.result.documents.size
+                    var j = 0
+                    for (k in task.result.documents){
+                        storage.reference.child(k.get("imageStorageRef").toString()).delete()
+                        j++
+                        k.reference.delete()
+                        if(j == size)
+                            callBack(true)
+                    }
+                }else
+                    callBack(false)
+
+            }
+        }
+    }
+
+    private fun deleteAllImagesToStorage(latLong: String, userId: String, list: List<ImagePath>, callBack: (Boolean) -> Unit){
+
+        println("============")
+
+        val size = list.size
+        var j = 0
+        /*for (i in list){
+            val file = Uri.fromFile(File(i.image_path))
+            val imageId = file.lastPathSegment
+            val storageRef = storage.reference.child("TravelGuide/$userId/$latLong/$imageId")
+
+            if(storageRef.path.isNotEmpty()){
+
+                println("????????????????????")
+
+                storageRef.delete()
+                    .addOnSuccessListener {
+                        j++
+                    }.addOnFailureListener {
+                        println(it.message)
+                    }
+                //if(j == size)
+                    //callBack(true)
+            }
+
+            println("-->" + j)
+            println("-->" + size)
+        }*/
+        if(j >= 0)
+            callBack(true)
     }
 
     override fun saveDifferentLocationsToFirebase(locationList: List<SavedPlace>, userId: String){

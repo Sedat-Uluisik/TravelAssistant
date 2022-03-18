@@ -69,6 +69,7 @@ class SavedDetailsFragment @Inject constructor(
     private var pickCamera: Boolean = false
     private var userLocation: Location ?= null //yeni yer kaydetmek için kullanılıyor.
     private var isAddNewLocation: Boolean = false
+    private var latLong: String = "" //resimleri doyaya kaydetmek için kullanılıyor.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,6 +98,7 @@ class SavedDetailsFragment @Inject constructor(
             databinding.clickListener = this
 
             if(savedPlace != null && !isAddNewLocation){
+                latLong = "${savedPlace.lat}_${savedPlace.lon}"
                 viewModel.getImages(savedPlace.rowid)
                 databinding.savedPlace = savedPlace
             }
@@ -182,22 +184,18 @@ class SavedDetailsFragment @Inject constructor(
     }
 
     private fun observe(){
-        viewModel.imagesPaths.observe(viewLifecycleOwner, {
-            it?.let { list->
-                if(list.isNotEmpty()){
-
-                    //println(list.size)
-
+        viewModel.imagesPaths.observe(viewLifecycleOwner) {
+            it?.let { list ->
+                if (list.isNotEmpty()) {
                     savedImagesAdapter.imageList = list
                     databinding.imagesNotFount.visibility = View.GONE
                     databinding.recyclerSavedPlaceImages.visibility = View.VISIBLE
-                }
-                else{
+                } else {
                     databinding.imagesNotFount.visibility = View.VISIBLE
                     databinding.recyclerSavedPlaceImages.visibility = View.GONE
                 }
             }
-        })
+        }
     }
 
     /*private val swipeRecyclerItemForDelete = object :ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP){
@@ -355,7 +353,7 @@ class SavedDetailsFragment @Inject constructor(
                             for (i in 0 until count){
                                 val uri = intentFromResult.clipData!!.getItemAt(i).uri
 
-                                viewModel.imagesForSave.add(ImagePath(0, 0, uri.toString()))
+                                viewModel.imagesForSave.add(ImagePath(0, 0, latLong, uri.toString()))
                             }
                             if(viewModel.imagesForSave.size > 0){
                                 savedImagesAdapter.imageList = viewModel.imagesForSave
@@ -371,7 +369,7 @@ class SavedDetailsFragment @Inject constructor(
 
                         try {
 
-                            viewModel.imagesForSave.add(ImagePath(0, 0, uri.toString()))
+                            viewModel.imagesForSave.add(ImagePath(0, 0, latLong, uri.toString()))
 
                             if(viewModel.imagesForSave.size > 0){
                                 savedImagesAdapter.imageList = viewModel.imagesForSave
@@ -384,7 +382,7 @@ class SavedDetailsFragment @Inject constructor(
 
                         //val file = File(currentPhotoPath)
                         //viewModel.imagesForSave.add(ImagePath(0, 0, Uri.fromFile(file).toString())) firebase ye yüklerken uri nedeniyle hata veriyor
-                        viewModel.imagesForSave.add(ImagePath(0, 0, currentPhotoPath))
+                        viewModel.imagesForSave.add(ImagePath(0, 0, latLong, currentPhotoPath))
 
                         /*println(currentPhotoPath)
                         println(file)
@@ -402,7 +400,7 @@ class SavedDetailsFragment @Inject constructor(
                     databinding.recyclerSavedPlaceImages.visibility = View.VISIBLE
 
                     val file = File(currentPhotoPath)
-                    viewModel.imagesForSave.add(ImagePath(0, 0, Uri.fromFile(file).toString()))
+                    viewModel.imagesForSave.add(ImagePath(0, 0, latLong, currentPhotoPath))
 
                     if(viewModel.imagesForSave.size > 0){
 

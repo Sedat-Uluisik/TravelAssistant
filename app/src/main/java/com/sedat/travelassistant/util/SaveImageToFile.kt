@@ -14,8 +14,10 @@ import java.io.IOException
 import java.io.OutputStream
 
 class SaveImageToFile() {
-    fun save(context: Context, bitmap: Bitmap): Uri {  //galeriden alınan resmi kaydetmek için kullanılıyor.
-        val dir = File(context.getExternalFilesDir("/"), "pictures")
+    fun save(context: Context, bitmap: Bitmap, latLong: String): Uri {  //galeri/kamera alınan resmi kaydetmek için kullanılıyor.
+        //latLong ile resimleri ilgili mekana ait dosya altına kaydetmek için kullanılıyor.
+        //val dir = File(context.getExternalFilesDir("/aaaaa/"), "pictures")
+        val dir = File(context.getExternalFilesDir("/pictures/"), "$latLong")
         if(!dir.exists())
             dir.mkdir()
 
@@ -27,7 +29,7 @@ class SaveImageToFile() {
             stream.flush()
             stream.close()
         }catch (e: Exception){
-            println(e.message)
+            println("---> " + e.message)
         }
 
         return Uri.parse(file.path)

@@ -50,7 +50,7 @@ class SavedPlacesViewModel @Inject constructor(
             repository.updatePlaceFromRoom(savedPlace)
 
             if(imagesForSave.size > 0)
-                saveImagePaths(context, savedPlace.rowid, pickCamera)
+                saveImagePaths(context, savedPlace.rowid, pickCamera, "${savedPlace.lat}_${savedPlace.lon}")
         }
     }
 
@@ -60,11 +60,11 @@ class SavedPlacesViewModel @Inject constructor(
             val currentPlace = repository.getPlaceWithLatLonFromRoom(savedPlace.lat, savedPlace.lon)
 
             if(imagesForSave.size > 0)
-                saveImagePaths(context, currentPlace.rowid, pickCamera)
+                saveImagePaths(context, currentPlace.rowid, pickCamera, "${savedPlace.lat}_${savedPlace.lon}")
         }
     }
 
-    private suspend fun saveImagePaths(context: Context, root_id: Int, pickCamera: Boolean){
+    private suspend fun saveImagePaths(context: Context, root_id: Int, pickCamera: Boolean, latLong: String){
         /*
             Kameradan resim seçince resim dosyasını otomatik otuşurur.
             Galeriden resim seçince resmi dosyaya manuel olarak kaydetmemiz gerekir.
@@ -75,10 +75,12 @@ class SavedPlacesViewModel @Inject constructor(
         //resim yolu room a kaydedilir ve resim dosya içine kaydedilir.
         for (i in imagesForSave){
             val newImagePath = ImagePath(
-                    0,
-                    root_id,
-                    if(pickCamera) i.image_path else SaveImageToFile().save(context, convertUriToBitmap(context, Uri.parse(i.image_path))).toString()
+                0,
+                root_id,
+                latLong,
+                if(pickCamera) i.image_path else SaveImageToFile().save(context, convertUriToBitmap(context, Uri.parse(i.image_path)), latLong).toString()
             )
+
             repository.saveImageForRoom(newImagePath)
         }
 
