@@ -710,8 +710,10 @@ class PlaceRepository @Inject constructor(
 
                                val file = File(dir, imageName)
 
-                               storage.reference.child(imageStorageRef).getFile(file).addOnSuccessListener { task->
-                                   callBack(file.path, latLong)
+                               if(!file.exists()){
+                                   storage.reference.child(imageStorageRef).getFile(file).addOnSuccessListener { task->
+                                       callBack(file.path, latLong)
+                                   }
                                }
                            }
                        }
@@ -719,10 +721,6 @@ class PlaceRepository @Inject constructor(
                 }
             }
         }
-
-
-
-
     }
 
     override suspend fun saveDifferentUserSavedLocations(locationList: List<SavedPlace>) {

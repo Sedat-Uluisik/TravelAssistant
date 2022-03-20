@@ -178,9 +178,6 @@ class SavedPlacesViewModel @Inject constructor(
                 }
                 repository.saveImagesFromFirebaseToFile(userId){ path, latLong->
                     launch {
-
-                        println(path)
-
                         val imagePath = ImagePath(
                             0,
                             0,
@@ -199,8 +196,18 @@ class SavedPlacesViewModel @Inject constructor(
             repository.getUserSavedLocations(userId){
                 launch {
                     repository.saveDifferentUserSavedLocations(it)
-
                     getPlaces()
+                }
+            }
+            repository.saveImagesFromFirebaseToFile(userId){path, latLong->
+                launch {
+                    val imagePath = ImagePath(
+                        0,
+                        0,
+                        latLong,
+                        path
+                    )
+                    repository.saveImageForRoom(imagePath)
                 }
             }
         }
