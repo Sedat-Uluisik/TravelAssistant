@@ -42,6 +42,12 @@ class SaveImageToFile() {
                 Toast.makeText(context, "Resim Silindi", Toast.LENGTH_SHORT).show()
     }
 
+    fun deletePicturesFile(context: Context){
+        val dir = File(context.getExternalFilesDir("/"), "pictures")
+        if(dir.exists())
+            dir.deleteRecursively() //pictures dosyasını ve içindeki herşeyi siler.
+    }
+
     fun randomUid(): String{
         val alphabet: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
         val randomUid: String = List(5) { alphabet.random() }.joinToString("")

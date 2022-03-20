@@ -110,8 +110,8 @@ class PlaceRepository @Inject constructor(
         dao.saveImageForRoom(imagePath)
     }
 
-    override suspend fun getSavedPlaceImages(root_id: Int): List<ImagePath> {
-        return dao.getSavedPlaceImages(root_id)
+    override suspend fun getSavedPlaceImages(latLong: String): List<ImagePath> {
+        return dao.getSavedPlaceImages(latLong)
     }
 
     override suspend fun getAllSavedPlaceImages(
@@ -120,8 +120,8 @@ class PlaceRepository @Inject constructor(
         callBack(dao.getAllSavedPlaceImages())
     }
 
-    override suspend fun getOneImageFromSavedPlaces(root_ids: List<Int>): List<ImagePath> {
-        return dao.getOneImageFromSavedPlaces(root_ids)
+    override suspend fun getOneImageFromSavedPlaces(latLongs: List<String>): List<ImagePath> {
+        return dao.getOneImageFromSavedPlaces(latLongs)
     }
 
     override suspend fun deleteImagesFromRoom(id: Int, root_id: Int) {
@@ -492,18 +492,12 @@ class PlaceRepository @Inject constructor(
         /*
         firebase deki kayıtları silip telefondaki kayıtları yükler.
          */
-
-        println("11111111111111111111111")
-
         val savedLocationsRef = dbFirestore
             .collection(userSavedLocations)
             .document(userId)
             .collection(locations)
 
         deleteOldLocationsToFirebase(savedLocationsRef){
-
-            println("33333333" + it)
-
             if(it){
                 for (i in locationList){
                     val map = HashMap<String, Any>()
@@ -527,23 +521,13 @@ class PlaceRepository @Inject constructor(
                             imagePath.root_id == i.rowid
                         }
 
-                        deleteAllImagesToStorage("${i.lat}_${i.lon}", userId, list){ bool-> //lokasyona ait resimler storage dan silinir.
-
-                            println("55555" + bool)
-
-                            if(bool){
-                                saveLocationImagesToFirebase(list, userId, "${i.lat}_${i.lon}"){ downloadUrl, imageStorageRef, imageId -> //lokasyona ait resimler tekrar storage a yüklenir
-
-                                    println(downloadUrl)
-
-                                    imageUrlRef.collection(images).document(imageId)
-                                        .set(mapOf(
-                                            "imageStorageUrl" to downloadUrl,
-                                            "imageStorageRef" to imageStorageRef,
-                                            "imageId" to imageId
-                                        ))
-                                }
-                            }
+                        saveLocationImagesToFirebase(list, userId, "${i.lat}_${i.lon}"){ downloadUrl, imageStorageRef, imageId -> //lokasyona ait resimler tekrar storage a yüklenir
+                            imageUrlRef.collection(images).document(imageId)
+                                .set(mapOf(
+                                    "imageStorageUrl" to downloadUrl,
+                                    "imageStorageRef" to imageStorageRef,
+                                    "imageId" to imageId
+                                ))
                         }
                     }
                 }
@@ -554,9 +538,6 @@ class PlaceRepository @Inject constructor(
     }
 
     private fun saveLocationImagesToFirebase(imageList: List<ImagePath>, userId: String, latLong: String, callBack: (String,String, String) -> Unit){
-
-        println(imageList)
-
         for (i in imageList){
             val stream = FileInputStream(File(i.image_path))
 
@@ -583,27 +564,15 @@ class PlaceRepository @Inject constructor(
         /*
         telefondaki kayıtları firebase db ye kaydetmek için eski kayıtları siler.
          */
-
-        println("222222222222222")
-
         savedLocationsRef.get().addOnCompleteListener {
             if(it.isSuccessful){
-
-                println("######")
-
                 if(it.result.documents.isNotEmpty()){
-
-                    println("$$$$$$$$$")
-
                     val size = it.result.documents.size
                     var j = 0
                     for (i in it.result.documents){
 
                         val ref = savedLocationsRef.document(i.id).collection(images)
                         deleteAllImageReferenceAndImagesToFirebase(ref){ bool-> //önce resim referansları silinir.
-
-                            println("777777777777" + bool)
-
                             if(bool || !bool){
                                 j++
                                 i.reference.delete() //daha sonra bir üst coleksiyon/doküman a ait referans silinir.
@@ -624,9 +593,6 @@ class PlaceRepository @Inject constructor(
     }
 
     private fun deleteAllImageReferenceAndImagesToFirebase(collectionReference: CollectionReference, callBack: (Boolean) -> Unit){
-
-        println("5555555555555555")
-
         collectionReference.get().addOnCompleteListener { task-> //lokasyona ait resimlerin referansları silinir.
             if(task.isSuccessful){
                 if(task.result.documents.isNotEmpty()){
@@ -646,39 +612,7 @@ class PlaceRepository @Inject constructor(
         }
     }
 
-    private fun deleteAllImagesToStorage(latLong: String, userId: String, list: List<ImagePath>, callBack: (Boolean) -> Unit){
-
-        println("============")
-
-        val size = list.size
-        var j = 0
-        /*for (i in list){
-            val file = Uri.fromFile(File(i.image_path))
-            val imageId = file.lastPathSegment
-            val storageRef = storage.reference.child("TravelGuide/$userId/$latLong/$imageId")
-
-            if(storageRef.path.isNotEmpty()){
-
-                println("????????????????????")
-
-                storageRef.delete()
-                    .addOnSuccessListener {
-                        j++
-                    }.addOnFailureListener {
-                        println(it.message)
-                    }
-                //if(j == size)
-                    //callBack(true)
-            }
-
-            println("-->" + j)
-            println("-->" + size)
-        }*/
-        if(j >= 0)
-            callBack(true)
-    }
-
-    override fun saveDifferentLocationsToFirebase(locationList: List<SavedPlace>, userId: String){
+    override fun saveDifferentLocationsToFirebase(locationList: List<SavedPlace>, imageList: List<ImagePath>, userId: String){
         //telefondaki kayıtlardan firebase de olmayanları firebase ye kaydeder.
 
         val savedLocationsRef = dbFirestore
@@ -699,7 +633,27 @@ class PlaceRepository @Inject constructor(
             map["lat"] = i.lat
             map["lon"] = i.lon
 
-            savedLocationsRef.document("${i.lat}_${i.lon}").set(map)
+            val newRef = savedLocationsRef.document("${i.lat}_${i.lon}")
+
+            newRef.set(map).addOnCompleteListener {
+                if(it.isSuccessful){
+
+                    if(imageList.isNotEmpty()) {
+                        val list = imageList.filter { imagePath ->
+                            imagePath.root_id == i.rowid
+                        }
+
+                        saveLocationImagesToFirebase(list, userId, "${i.lat}_${i.lon}"){ downloadUrl, imageStorageRef, imageId -> //lokasyona ait resimler tekrar storage a yüklenir
+                            newRef.collection(images).document(imageId)
+                                .set(mapOf(
+                                    "imageStorageUrl" to downloadUrl,
+                                    "imageStorageRef" to imageStorageRef,
+                                    "imageId" to imageId
+                                ))
+                        }
+                    }
+                }
+            }
         }
         Toast.makeText(context, "buluta yükleme başarılı", Toast.LENGTH_LONG).show()
     }
@@ -721,16 +675,54 @@ class PlaceRepository @Inject constructor(
         }
     }
 
-    override suspend fun removeOldLocationsToRoomAndSaveNewLocationsFromFirebase(locationList: List<SavedPlace>) {
+    override suspend fun removeOldLocationsToRoomAndSaveNewLocationsFromFirebase(locationList: List<SavedPlace>, userId: String) {
         //telefondaki var olan kayıtları silip firebase den indirilen kayıtları kaydeder.
         if(locationList.isNotEmpty()){
             dao.deleteAllSavedLocations()
+            dao.deleteAllImagePaths()
+            SaveImageToFile().deletePicturesFile(context)
 
             dao.saveLocationListToRoom(*locationList.toTypedArray())
 
             Toast.makeText(context, "Mevcut kayıtlar silindi", Toast.LENGTH_SHORT).show()
             Toast.makeText(context, "Bulutaki kayıtlar indirildi", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun saveImagesFromFirebaseToFile(userId: String, callBack: (String, String) -> Unit){
+        val imageRef = dbFirestore.collection(userSavedLocations).document(userId).collection(locations)
+
+        imageRef.get().addOnSuccessListener {
+            if(it.documents.isNotEmpty()){
+
+                for (i in it.documents){
+                    val latLong = i.id
+                    imageRef.document(latLong).collection(images).get().addOnSuccessListener { snapshot->
+                       if(snapshot.documents.isNotEmpty()){
+
+                           for (j in snapshot.documents){
+                               val imageName = j.get("imageId").toString()
+                               val imageStorageRef = j.get("imageStorageRef").toString()
+
+                               val dir = File(context.getExternalFilesDir("/pictures/"), latLong)
+                               if(!dir.exists())
+                                   dir.mkdir()
+
+                               val file = File(dir, imageName)
+
+                               storage.reference.child(imageStorageRef).getFile(file).addOnSuccessListener { task->
+                                   callBack(file.path, latLong)
+                               }
+                           }
+                       }
+                    }
+                }
+            }
+        }
+
+
+
+
     }
 
     override suspend fun saveDifferentUserSavedLocations(locationList: List<SavedPlace>) {

@@ -85,7 +85,7 @@ class SavedPlacesViewModel @Inject constructor(
         }
 
         imagesForSave.clear()
-        getImages(root_id)
+        getImages(latLong)
     }
 
     private fun convertUriToBitmap(context: Context, uri: Uri): Bitmap {
@@ -100,10 +100,10 @@ class SavedPlacesViewModel @Inject constructor(
         }
     }
 
-    fun deleteImagesFromRoom(id: Int, root_id: Int){
+    fun deleteImagesFromRoom(id: Int, root_id: Int, latLong: String){
         launch {
             repository.deleteImagesFromRoom(id, root_id)
-            getImages(root_id)
+            getImages(latLong)
         }
     }
 
@@ -116,16 +116,16 @@ class SavedPlacesViewModel @Inject constructor(
     private val paths = MutableLiveData<List<ImagePath>>()
     val imagesPaths: LiveData<List<ImagePath>>
         get() = paths
-    fun getImages(root_id: Int){
+    fun getImages(latLong: String){
         launch {
-            val paths_ = repository.getSavedPlaceImages(root_id)
+            val paths_ = repository.getSavedPlaceImages(latLong)
             paths.value = paths_
         }
     }
 
     val imageList = MutableLiveData<List<ImagePath>>()
     private suspend fun getOneImageFromSavedPlaces(savedPlaceList: List<SavedPlace>){  //kaydedilenler sayfasında eğer resim eklenmiş ise 1 tanesini göstermek için.
-        val images = repository.getOneImageFromSavedPlaces(savedPlaceList.map { it.rowid })
+        val images = repository.getOneImageFromSavedPlaces(savedPlaceList.map { "${it.lat}_${it.lon}" })
         imageList.value = images
         places.value = savedPlaceList
     }
@@ -159,8 +159,13 @@ class SavedPlacesViewModel @Inject constructor(
 
     fun saveDifferentLocationsToFirebase(userId: String){
         if(placeList.value != null){
-            if(placeList.value!!.isNotEmpty())
-                repository.saveDifferentLocationsToFirebase(placeList.value!!, userId)
+            if(placeList.value!!.isNotEmpty()){
+                launch {
+                    repository.getAllSavedPlaceImages {
+                        repository.saveDifferentLocationsToFirebase(placeList.value!!, it, userId)
+                    }
+                }
+            }
         }
     }
 
@@ -168,9 +173,22 @@ class SavedPlacesViewModel @Inject constructor(
         if(userId.isNotEmpty()){
             repository.getUserSavedLocations(userId) {
                 launch {
-                    repository.removeOldLocationsToRoomAndSaveNewLocationsFromFirebase(it)
-
+                    repository.removeOldLocationsToRoomAndSaveNewLocationsFromFirebase(it,userId)
                     getPlaces()
+                }
+                repository.saveImagesFromFirebaseToFile(userId){ path, latLong->
+                    launch {
+
+                        println(path)
+
+                        val imagePath = ImagePath(
+                            0,
+                            0,
+                            latLong,
+                            path
+                        )
+                        repository.saveImageForRoom(imagePath)
+                    }
                 }
             }
         }

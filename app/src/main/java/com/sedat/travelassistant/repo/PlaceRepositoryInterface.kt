@@ -33,9 +33,9 @@ interface PlaceRepositoryInterface {
     suspend fun getPlacesFromRoom(): List<SavedPlace>
     suspend fun updatePlaceFromRoom(savedPlace: SavedPlace)
     suspend fun saveImageForRoom(imagePath: ImagePath)
-    suspend fun getSavedPlaceImages(root_id: Int): List<ImagePath>
+    suspend fun getSavedPlaceImages(latLong: String): List<ImagePath>
     suspend fun getAllSavedPlaceImages(callBack: (List<ImagePath>) -> Unit)
-    suspend fun getOneImageFromSavedPlaces(root_ids: List<Int>): List<ImagePath>
+    suspend fun getOneImageFromSavedPlaces(latLongs: List<String>): List<ImagePath>
     suspend fun deleteImagesFromRoom(id: Int, root_id: Int)
     suspend fun deleteAllImagesWithRootId(root_id: Int)
     suspend fun fullTextSearch(query: String): List<SavedPlace>
@@ -52,8 +52,9 @@ interface PlaceRepositoryInterface {
     fun sendVerificationEmail(listener: (Boolean) -> Unit)
 
     fun saveLocationsToFirebaseAndDeleteOldLocations(locationList: List<SavedPlace>, imageList: List<ImagePath>, userId: String)
-    fun saveDifferentLocationsToFirebase(locationList: List<SavedPlace>, userId: String)
-    suspend fun removeOldLocationsToRoomAndSaveNewLocationsFromFirebase(locationList: List<SavedPlace>)
+    fun saveDifferentLocationsToFirebase(locationList: List<SavedPlace>, imageList: List<ImagePath>, userId: String)
+    suspend fun removeOldLocationsToRoomAndSaveNewLocationsFromFirebase(locationList: List<SavedPlace>, userId: String)
     fun getUserSavedLocations(userId: String, listener: (List<SavedPlace>) -> Unit)
     suspend fun saveDifferentUserSavedLocations(locationList: List<SavedPlace>)
+    fun saveImagesFromFirebaseToFile(userId: String, callBack: (String, String) -> Unit)
 }

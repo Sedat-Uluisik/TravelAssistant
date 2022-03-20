@@ -99,7 +99,7 @@ class SavedDetailsFragment @Inject constructor(
 
             if(savedPlace != null && !isAddNewLocation){
                 latLong = "${savedPlace.lat}_${savedPlace.lon}"
-                viewModel.getImages(savedPlace.rowid)
+                viewModel.getImages(latLong)
                 databinding.savedPlace = savedPlace
             }
 
@@ -163,8 +163,8 @@ class SavedDetailsFragment @Inject constructor(
                         }
                     }
                 }else{
-                    viewModel.deleteImagesFromRoom(it.id, it.root_id) //room dan resim yolu silinir.
-                    SaveImageToFile().delete(requireContext(), it.image_path)  //dosya dan resim silinir.
+                    viewModel.deleteImagesFromRoom(it.id, it.root_id, it.latLong) //room dan resim yolu silinir.
+                    SaveImageToFile().delete(requireContext(), it.image_path)  //resim kaydedildiği dosyadan silinir.
                 }
             }else
                 Toast.makeText(requireContext(), "silme işlemi güncelleme modunda yapılabilir", Toast.LENGTH_LONG).show()
@@ -436,13 +436,21 @@ class SavedDetailsFragment @Inject constructor(
         if(savedPlace.rowid != -1 && savedPlace.lat != -1.0 && savedPlace.lon != -1.0){
             val savedPlaceNew = SavedPlace(
                     savedPlace.rowid,
-                    databinding.placeName.text.toString().capitalize(Locale.ROOT),  //capitalize ile ilk harf büyük yapıldı.
-                    databinding.city.text.toString().capitalize(Locale.ROOT),
-                    databinding.district.text.toString().capitalize(Locale.ROOT),
-                    databinding.address.text.toString().capitalize(Locale.ROOT),
-                    databinding.state.text.toString().capitalize(Locale.ROOT),
-                    databinding.street.text.toString().capitalize(Locale.ROOT),
-                    databinding.suburb.text.toString().capitalize(Locale.ROOT),
+                    // (Deprecated) databinding.placeName.text.toString().capitalize(Locale.ROOT),  //capitalize ile ilk harf büyük yapıldı.
+                databinding.placeName.text.toString()
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },  //capitalize ile ilk harf büyük yapıldı.
+                databinding.city.text.toString()
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
+                databinding.district.text.toString()
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
+                databinding.address.text.toString()
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
+                databinding.state.text.toString()
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
+                databinding.street.text.toString()
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
+                databinding.suburb.text.toString()
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
                     savedPlace.lat,
                     savedPlace.lon
             )
@@ -460,7 +468,7 @@ class SavedDetailsFragment @Inject constructor(
         }else
             Toast.makeText(requireContext(), getString(R.string.error_location), Toast.LENGTH_SHORT).show()
 
-        viewModel.getImages(savedPlace.rowid)
+        viewModel.getImages("${savedPlace.lat}_${savedPlace.lon}")
         databinding.savedPlace = savedPlace
     }
 

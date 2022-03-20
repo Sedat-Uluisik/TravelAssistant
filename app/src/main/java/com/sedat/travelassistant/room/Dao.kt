@@ -27,6 +27,9 @@ interface Dao {
     @Query("DELETE FROM saved_places")
     suspend fun deleteAllSavedLocations()
 
+    @Query("DELETE FROM place_images_paths")
+    suspend fun deleteAllImagePaths()
+
     @Query("SELECT * FROM saved_places WHERE lat = :lat AND lon = :lon")
     suspend fun getPlaceWithLatLonFromRoom(lat: Double, lon: Double): SavedPlace
 
@@ -42,14 +45,16 @@ interface Dao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveImageForRoom(imagePath: ImagePath)
 
-    @Query("SELECT * FROM place_images_paths WHERE root_id =:root_id")
-    suspend fun getSavedPlaceImages(root_id: Int): List<ImagePath>
+    //@Query("SELECT * FROM place_images_paths WHERE root_id =:root_id")
+    //suspend fun getSavedPlaceImages(root_id: Int): List<ImagePath>
+    @Query("SELECT * FROM place_images_paths WHERE latLong =:latLong")
+    suspend fun getSavedPlaceImages(latLong: String): List<ImagePath>
 
     @Query("SELECT * FROM place_images_paths ")
     suspend fun getAllSavedPlaceImages(): List<ImagePath>
 
-    @Query("SELECT * FROM place_images_paths WHERE root_id IN (:root_ids)")
-    suspend fun getOneImageFromSavedPlaces(root_ids: List<Int>): List<ImagePath>
+    @Query("SELECT * FROM place_images_paths WHERE latLong IN (:latLongs)")
+    suspend fun getOneImageFromSavedPlaces(latLongs: List<String>): List<ImagePath>
 
     @Query("DELETE FROM place_images_paths WHERE id =:id AND root_id =:root_id")
     suspend fun deleteImagesFromRoom(id: Int, root_id: Int)

@@ -74,7 +74,7 @@ class SavedPlacesAdapter @Inject constructor(
         if(imageList.size > 0){
             var isImage = false
             for (i in imageList){
-                if(i.root_id == place.rowid){
+                if(i.latLong == "${place.lat}_${place.lon}"){
                     isImage = true
                     glide.load(i.image_path).transform(CircleCrop()).into(holder.item.imageView)
                     break

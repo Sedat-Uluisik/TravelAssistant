@@ -123,7 +123,7 @@ class SavedFragment : Fragment() {
             viewModel.getPlaces()
 
             //Dosya içindeki tüm resimleri silmek için kullanılıyor.
-            viewModel.getImages(selectedPlace.rowid)
+            viewModel.getImages("${selectedPlace.lat}_${selectedPlace.lon}")
             viewModel.imagesPaths.observe(viewLifecycleOwner) {
                 it?.let { list ->
                     if (list.isNotEmpty()) {
