@@ -48,7 +48,7 @@ class MapFragmentViewModel @Inject constructor(
     val places: LiveData<Place>
         get() = placesList
     fun getPlaces(category: String, latLong: String, limit: Int){
-       /*placesList.postValue(null)
+       placesList.postValue(null)
         disposable.add(
                 repository.getPlace(category, latLong, limit)
                     .subscribeOn(Schedulers.newThread())
@@ -63,7 +63,7 @@ class MapFragmentViewModel @Inject constructor(
                         }
 
                     })
-        )*/
+        )
     }
 
     private var list = MutableLiveData<List<SavedPlace>>()

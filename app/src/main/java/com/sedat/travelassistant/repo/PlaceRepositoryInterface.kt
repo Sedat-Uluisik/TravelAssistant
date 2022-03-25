@@ -37,7 +37,7 @@ interface PlaceRepositoryInterface {
     suspend fun getAllSavedPlaceImages(callBack: (List<ImagePath>) -> Unit)
     suspend fun getOneImageFromSavedPlaces(latLongs: List<String>): List<ImagePath>
     suspend fun deleteImagesFromRoom(id: Int, root_id: Int)
-    suspend fun deleteAllImagesWithRootId(root_id: Int)
+    suspend fun deleteAllImagesPathsWithLatLonFromRoom(latLong: String)
     suspend fun fullTextSearch(query: String): List<SavedPlace>
 
     //firebase functions

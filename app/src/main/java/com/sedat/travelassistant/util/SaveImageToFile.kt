@@ -48,6 +48,12 @@ class SaveImageToFile() {
             dir.deleteRecursively() //pictures dosyasını ve içindeki herşeyi siler.
     }
 
+    fun deleteOnlyPicturesOfLatLon(context: Context, latLong: String){
+        val dir = File(context.getExternalFilesDir("/pictures/"), latLong)
+        if(dir.exists())
+            dir.deleteRecursively()
+    }
+
     fun randomUid(): String{
         val alphabet: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
         val randomUid: String = List(5) { alphabet.random() }.joinToString("")

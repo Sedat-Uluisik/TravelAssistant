@@ -59,8 +59,8 @@ interface Dao {
     @Query("DELETE FROM place_images_paths WHERE id =:id AND root_id =:root_id")
     suspend fun deleteImagesFromRoom(id: Int, root_id: Int)
 
-    @Query("DELETE FROM place_images_paths WHERE root_id =:root_id")
-    suspend fun deleteAllImagesWithRootId(root_id: Int)  //root_id ye sahip tüm resimleri silinsin.
+    @Query("DELETE FROM place_images_paths WHERE latLong =:latLong")
+    suspend fun deleteAllImagesPathsWithLatLonFromRoom(latLong: String)
 
     //önce oluşturulan sanal tabloda hızlıca arama yapılır ve sonuçlar gerçek tabloda eşleştirilip data alınır.
     @Query("SELECT * FROM saved_places JOIN saved_places_fts ON saved_places.name = saved_places_fts.name OR saved_places.suburb = saved_places_fts.suburb WHERE saved_places_fts MATCH :query")

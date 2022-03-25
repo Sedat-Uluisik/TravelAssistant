@@ -1,5 +1,6 @@
 package com.sedat.travelassistant.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -91,6 +92,7 @@ class SavedPlacesAdapter @Inject constructor(
 
     class ViewHolder(val item: SavedPlaceItemLayoutBinding): RecyclerView.ViewHolder(item.root)
 
+    @SuppressLint("NotifyDataSetChanged")
     fun refreshData(){
         notifyDataSetChanged()
     }

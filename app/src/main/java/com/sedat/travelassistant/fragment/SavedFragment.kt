@@ -1,5 +1,6 @@
 package com.sedat.travelassistant.fragment
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -91,6 +92,11 @@ class SavedFragment : Fragment() {
             else
                 Toast.makeText(requireContext(), "Bulut işlemleri için giriş yapmanız gerekir", Toast.LENGTH_LONG).show()
         }
+
+        binding.refreshLayoutSaved.setOnRefreshListener {
+            viewModel.getPlaces()
+            binding.refreshLayoutSaved.isRefreshing = false
+        }
     }
 
     private fun observe(){
@@ -100,30 +106,32 @@ class SavedFragment : Fragment() {
                     savedPlacesAdapter.placeList = list
                 else
                     savedPlacesAdapter.placeList = listOf()
-                savedPlacesAdapter.refreshData()
+                //savedPlacesAdapter.refreshData()
             }
         }
 
-        viewModel.imageList.observe(viewLifecycleOwner, Observer {
-            savedPlacesAdapter.imageList.clear()
-            savedPlacesAdapter.imageList.addAll(it)
-            savedPlacesAdapter.refreshData()
-        })
+        viewModel.imageList.observe(viewLifecycleOwner) {
+            if(it.isNotEmpty()){
+                savedPlacesAdapter.imageList.clear()
+                savedPlacesAdapter.imageList.addAll(it)
+                //savedPlacesAdapter.refreshData()
+            }
+        }
     }
 
     private val swipeRecyclerItemForDelete = object :ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-            return true
+            return false
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position = viewHolder.layoutPosition
             val selectedPlace = savedPlacesAdapter.placeList[position]
             viewModel.deleteSavedPlace(selectedPlace.lat, selectedPlace.lon)
-            viewModel.getPlaces()
+            //viewModel.getPlaces()
 
             //Dosya içindeki tüm resimleri silmek için kullanılıyor.
-            viewModel.getImages("${selectedPlace.lat}_${selectedPlace.lon}")
+            /*viewModel.getImages("${selectedPlace.lat}_${selectedPlace.lon}")
             viewModel.imagesPaths.observe(viewLifecycleOwner) {
                 it?.let { list ->
                     if (list.isNotEmpty()) {
@@ -132,9 +140,25 @@ class SavedFragment : Fragment() {
                         }
                     }
                 }
+            }*/
+
+            //delete all pictures in file
+            SaveImageToFile().deleteOnlyPicturesOfLatLon(requireContext(), "${selectedPlace.lat}_${selectedPlace.lon}")
+            viewModel.deleteAllImagesPathsWithLatLonFromRoom("${selectedPlace.lat}_${selectedPlace.lon}")
+
+            //viewModel.clearData()
+
+
+             var job: Job?= null
+            job?.cancel()
+            job = lifecycleScope.launch {
+                delay(400)
+                viewModel.getPlaces()
+                job?.cancel()
             }
-            viewModel.deleteAllImagesWithRootId(selectedPlace.rowid) //room dan tüm resimler silinir.
-            viewModel.clearData()
+
+
+
         }
     }
 

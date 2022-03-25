@@ -107,9 +107,9 @@ class SavedPlacesViewModel @Inject constructor(
         }
     }
 
-    fun deleteAllImagesWithRootId(root_id: Int){  //root_id ye sahip tüm resimleri siler.
+    fun deleteAllImagesPathsWithLatLonFromRoom(latLong: String){
         launch {
-            repository.deleteAllImagesWithRootId(root_id)
+            repository.deleteAllImagesPathsWithLatLonFromRoom(latLong)
         }
     }
 
@@ -126,7 +126,11 @@ class SavedPlacesViewModel @Inject constructor(
     val imageList = MutableLiveData<List<ImagePath>>()
     private suspend fun getOneImageFromSavedPlaces(savedPlaceList: List<SavedPlace>){  //kaydedilenler sayfasında eğer resim eklenmiş ise 1 tanesini göstermek için.
         val images = repository.getOneImageFromSavedPlaces(savedPlaceList.map { "${it.lat}_${it.lon}" })
-        imageList.value = images
+        if(images.isNotEmpty())
+            imageList.value = images
+        else
+            imageList.value = listOf()
+
         places.value = savedPlaceList
     }
 
@@ -137,9 +141,6 @@ class SavedPlacesViewModel @Inject constructor(
             else{  //like ile arama yaparken %query% kullanılır, fts ile arama yapmak için *query* kullanılır.
                 repository.fullTextSearch("*$query*").let {
                     places.value = it
-
-                    for (i in it)
-                        println(i.name + i.rowid + " " + i.lat + " " + i.lon)
                 }
             }
         }
@@ -174,7 +175,6 @@ class SavedPlacesViewModel @Inject constructor(
             repository.getUserSavedLocations(userId) {
                 launch {
                     repository.removeOldLocationsToRoomAndSaveNewLocationsFromFirebase(it,userId)
-                    getPlaces()
                 }
                 repository.saveImagesFromFirebaseToFile(userId){ path, latLong->
                     launch {
@@ -196,7 +196,7 @@ class SavedPlacesViewModel @Inject constructor(
             repository.getUserSavedLocations(userId){
                 launch {
                     repository.saveDifferentUserSavedLocations(it)
-                    getPlaces()
+                    //getPlaces()
                 }
             }
             repository.saveImagesFromFirebaseToFile(userId){path, latLong->

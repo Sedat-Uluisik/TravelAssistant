@@ -128,8 +128,8 @@ class PlaceRepository @Inject constructor(
         dao.deleteImagesFromRoom(id, root_id)
     }
 
-    override suspend fun deleteAllImagesWithRootId(root_id: Int) {
-        dao.deleteAllImagesWithRootId(root_id)
+    override suspend fun deleteAllImagesPathsWithLatLonFromRoom(latLong: String) {
+        dao.deleteAllImagesPathsWithLatLonFromRoom(latLong)
     }
 
     override suspend fun fullTextSearch(query: String): List<SavedPlace> {
@@ -607,7 +607,6 @@ class PlaceRepository @Inject constructor(
                     }
                 }else
                     callBack(false)
-
             }
         }
     }
@@ -686,6 +685,7 @@ class PlaceRepository @Inject constructor(
 
             Toast.makeText(context, "Mevcut kayıtlar silindi", Toast.LENGTH_SHORT).show()
             Toast.makeText(context, "Bulutaki kayıtlar indirildi", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Sayfayı yenileyin", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -729,6 +729,7 @@ class PlaceRepository @Inject constructor(
             dao.saveLocationListToRoom(*locationList.toTypedArray())
 
             Toast.makeText(context, "Farklı kayıtlar indirildi", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Sayfayı yenileyin", Toast.LENGTH_SHORT).show()
         }
     }
 
