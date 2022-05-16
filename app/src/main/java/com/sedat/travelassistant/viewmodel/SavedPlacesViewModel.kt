@@ -29,8 +29,10 @@ class SavedPlacesViewModel @Inject constructor(
     val placeList: LiveData<List<SavedPlace>>
         get() = places
     fun getPlaces(){
+
+        println("+++++++++++++++++")
+
         launch {
-            places.value = listOf()
             val data = repository.getPlacesFromRoom()
             if(data != null && data.isNotEmpty()){
                 getOneImageFromSavedPlaces(data)

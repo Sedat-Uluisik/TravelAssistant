@@ -63,6 +63,7 @@ interface Dao {
     suspend fun deleteAllImagesPathsWithLatLonFromRoom(latLong: String)
 
     //önce oluşturulan sanal tabloda hızlıca arama yapılır ve sonuçlar gerçek tabloda eşleştirilip data alınır.
-    @Query("SELECT * FROM saved_places JOIN saved_places_fts ON saved_places.name = saved_places_fts.name OR saved_places.suburb = saved_places_fts.suburb WHERE saved_places_fts MATCH :query")
+    //@Query("SELECT * FROM saved_places JOIN saved_places_fts ON saved_places.name = saved_places_fts.name OR saved_places.suburb = saved_places_fts.suburb WHERE saved_places_fts MATCH :query")
+    @Query("SELECT * FROM saved_places JOIN saved_places_fts ON saved_places.lat = saved_places_fts.lon OR saved_places.name = saved_places_fts.name WHERE saved_places_fts MATCH :query")
     suspend fun fullTextSearch(query: String): List<SavedPlace>
 }

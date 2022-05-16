@@ -518,7 +518,7 @@ class PlaceRepository @Inject constructor(
                     //kaydedilen resmin url si alınıp firestore da ilgili lokasyon altına kaydedilir.
                     if(imageList.isNotEmpty()){
                         val list = imageList.filter { imagePath ->
-                            imagePath.root_id == i.rowid
+                            imagePath.latLong == "${i.lat}_${i.lon}"
                         }
 
                         saveLocationImagesToFirebase(list, userId, "${i.lat}_${i.lon}"){ downloadUrl, imageStorageRef, imageId -> //lokasyona ait resimler tekrar storage a yüklenir

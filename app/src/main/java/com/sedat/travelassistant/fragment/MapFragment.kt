@@ -81,7 +81,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
     private var infoWindowBinding: MarkerInfoWindowBinding ?= null
 
     private lateinit var mMap: GoogleMap
-    private lateinit var polyLine: Polyline
     private lateinit var userLocation: LatLng
     private lateinit var viewModel: MapFragmentViewModel
     private lateinit var locationManager: LocationManager
@@ -105,6 +104,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
     private var isTraffic: Boolean = false
     private var gpsEnabled: Boolean = false
     private var drawCircle: Boolean = false
+    private var polyLine: Polyline ?= null
     private var getOncePlaces: Boolean = true  //konum değiştiğinde sürekli veri çekmemek için kullanıldı.
     private var userLocationPoint: Location ?= null
     private var userLocationIsAdded: Boolean = false  //kullanıcı konumunu rotaya bir defaya mahsus eklemek için kullanılıyor.
@@ -165,7 +165,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
             else{  //oluşturulan rotalar iptal edilir.
                 if(mMap != null){
                     viewModel.routeStarted.postValue(0)
-                    polyLine.remove()
+                    polyLine?.remove()
                     viewModel.clearRoutePoints()
                     userLocationIsAdded = false
                     binding.fabCreateRoute.setImageResource(R.drawable.route_64)
@@ -951,11 +951,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, CustomClickListener {    //m
 
         var check = false
         if(viewModel != null){
-            for (i in viewModel.selectedRouteCoordinates.map { it.location }){  //Seçilen rotanın birden fazla eklenmesi önlendi.
+            /*for (i in viewModel.selectedRouteCoordinates.map { it.location }){  //Seçilen rotanın birden fazla eklenmesi önlendi.
                 if(i == location){
                     check = true
                 }
-            }
+            }*/
+
+            check = viewModel.selectedRouteCoordinates.map { it.location.latitude }.contains(location.latitude)
+
             if(!check){
                 if(maxRouteSize > 0){
                     viewModel.selectedRouteCoordinates.add(selectedRoute)

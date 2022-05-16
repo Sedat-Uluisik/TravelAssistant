@@ -33,5 +33,7 @@ data class SavedPlaceFTS(
         val address: String,
         val state: String,
         val street: String,
-        val suburb: String
+        val suburb: String,
+        val lat: Double,
+        val lon: Double
 )

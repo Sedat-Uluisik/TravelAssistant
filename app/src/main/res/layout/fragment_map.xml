@@ -94,14 +94,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/fab_settings"
-                app:fabSize="mini"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="2dp"
                 android:backgroundTint="#2ECC71"
-                app:backgroundTint="@android:color/transparent"
+                android:elevation="0dp"
                 android:src="@drawable/edit_location_32"
-                app:maxImageSize="32dp"
-                android:layout_margin="2dp"
+                app:backgroundTint="@android:color/transparent"
                 app:elevation="0dp"
-                android:elevation="0dp"/>
+                app:fabSize="mini"
+                app:maxImageSize="32dp" />
 
         </RelativeLayout>
 

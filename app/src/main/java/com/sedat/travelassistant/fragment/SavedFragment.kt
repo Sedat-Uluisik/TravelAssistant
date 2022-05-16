@@ -52,6 +52,7 @@ class SavedFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -96,10 +97,14 @@ class SavedFragment : Fragment() {
         binding.refreshLayoutSaved.setOnRefreshListener {
             viewModel.getPlaces()
             binding.refreshLayoutSaved.isRefreshing = false
+            savedPlacesAdapter.notifyDataSetChanged()
         }
     }
 
     private fun observe(){
+
+        //herşeyi silip farklı kayıtları getirken eksik gösteriyor ama başka sayfadan gelince gösteriyor.
+
         viewModel.placeList.observe(viewLifecycleOwner) {
             it?.let { list ->
                 if (list.isNotEmpty())
